@@ -127,6 +127,7 @@ id | Dungeon name | Название данжа
 9970 | Ruinous Manor (Hard) | Руины Кошмарной Абнукты
 9980 | Velik's Hold (Hard) | Вход в разрушенные катакомбы Велики
 9981 | Velik's Sanctuary (Hard) | Разрушенное Святилище Велики
+9985 | Sanctuary's Ruins (Hard) | Sanctuary's Ruins (Hard)
 9982 | Grotto of Lost Souls (Hard) | Мастерская Леандра (сложно)
 9983 | Dark Reach Citadel (Hard) | Крепость Темного Тенебриса
 9994 | Thaumetal Refinery (Hard) | Лаборатория Альфа-сайрекса
