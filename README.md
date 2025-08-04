@@ -65,6 +65,9 @@ Toolbox(/8) | Command description | Описание команды
 id | Dungeon name | Название данжа
 --- | --- | ---
 2800 | Dreadspire VALKYTEQ | Dreadspire VALKYTEQ
+2802 | Aesir's End (Hard) (Arborea Reborn) | Aesir's End (Hard) (Arborea Reborn)
+2803 | Aesir's End (Arborea Reborn) | Aesir's End (Arborea Reborn)
+2804 | Phantom hideout (Arborea Reborn) | Phantom hideout (Arborea Reborn)
 2809 | The Observatory (Arborea Reborn) | The Observatory (Arborea Reborn)
 2811 | Sea of Honor (Arborea Reborn) | Sea of Honor (Arborea Reborn)
 3023 | Akalath Quarantine | Секретное подземелье крепости Берарк
