@@ -31,7 +31,8 @@ The dungeon guide module with Text-to-speech notifications, display hints on scr
 
 Модуль подсказок по данжам с возможностью голосовых уведомлений, вывод подсказок в чат или на экран, а также отрисовка зон атак боссов и механик. Поддерживаются Русский и Английский языки (определяются автоматически).
 
-#### Other translations / Другие локализации
+#### Other translations and forks / Другие локализации и форки
+* [**Chinese (简体中文)** by Minor-fun](https://github.com/Minor-fun/tera-guide)
 * [**Spanish (Español)** by Loliconera](https://github.com/Loliconera/tera-guide-spanish)
 * [**Spanish (Español)** by Emilia](https://github.com/emilia-s2/Guia-DG-Portugues-Espanol)
 * [**Portuguese (Português)** by Emilia](https://github.com/emilia-s2/Guia-DG-Portugues-Espanol)
