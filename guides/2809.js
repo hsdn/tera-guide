@@ -6,11 +6,11 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	guide.type = SP;
 	const { entity } = dispatch.require.library;
 
-	let orb1_loc = null;
-	let orb2_loc = null;
-	let orb3_loc = null;
-	let orb4_loc = null;
-	let orb5_loc = null;
+	let orb1_loc = { x: 23790, y: 160322, z: 12617, w: 2.07 };
+	let orb2_loc = { x: 24082, y: 161256, z: 12617, w: -3.05 };
+	let orb3_loc = { x: 23449, y: 162197, z: 12617, w: -1.81 };
+	let orb4_loc = { x: 22142, y: 161855, z: 12617, w: -0.58 };
+	let orb5_loc = { x: 22463, y: 160329, z: 12617, w: 0.84 };
 	let crys_loc = null;
 	let road_from_gameId = null;
 	let enrage = 0;
@@ -102,6 +102,11 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	return {
 		"ns-2809-1000": [
+			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 99999999, pos: { x: 23790, y: 160322, z: 12617, w: 2.07 }, ownerName: "11111", message: "11111" },
+			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 99999999, pos: { x: 24082, y: 161256, z: 12617, w: -3.05 }, ownerName: "22222", message: "22222" },
+			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 99999999, pos: { x: 23449, y: 162197, z: 12617, w: -1.81 }, ownerName: "33333", message: "33333" },
+			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 99999999, pos: { x: 22142, y: 161855, z: 12617, w: -0.58 }, ownerName: "44444", message: "44444" },
+			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 99999999, pos: { x: 22463, y: 160329, z: 12617, w: 0.84 }, ownerName: "55555", message: "55555" },
 			{ type: "func", func: ent => road_from_gameId = ent.gameId },
 			{ type: "func", func: () => crys_off = 0 },
 			{ type: "spawn", sub_type: "item", id: 70052, sub_delay: 99999999, pos: { x: 23196, y: 161015, z: 12618, w: 1.56 } }
@@ -115,26 +120,11 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 
 		//Механика с шарами и дебаффами
-		"ns-2809-1001": [
-			{ type: "spawn", func: "marker", args: [false, -150, 0, 100, 99999999, false, ["11111", "111"]] },
-			{ type: "func", func: ent => orb1_loc = ent.pos }
-		],	//1
-		"ns-2809-1002": [
-			{ type: "spawn", func: "marker", args: [false, -85, 0, 100, 99999999, false, ["22222", "222"]] },
-			{ type: "func", func: ent => orb2_loc = ent.pos }
-		],		//2
-		"ns-2809-1003": [
-			{ type: "spawn", func: "marker", args: [false, -10, 0, 100, 99999999, false, ["33333", "333"]] },
-			{ type: "func", func: ent => orb3_loc = ent.pos }
-		],		//3
-		"ns-2809-1004": [
-			{ type: "spawn", func: "marker", args: [false, 60, 0, 100, 99999999, false, ["44444", "444"]] },
-			{ type: "func", func: ent => orb4_loc = ent.pos }
-		],		//4
-		"ns-2809-1005": [
-			{ type: "spawn", func: "marker", args: [false, 140, 0, 100, 99999999, false, ["55555", "555"]] },
-			{ type: "func", func: ent => orb5_loc = ent.pos }
-		],		//5
+		"ns-2809-1001": [{ type: "func", func: ent => orb1_loc = ent.pos }],
+		"ns-2809-1002": [{ type: "func", func: ent => orb2_loc = ent.pos }],
+		"ns-2809-1003": [{ type: "func", func: ent => orb3_loc = ent.pos }],
+		"ns-2809-1004": [{ type: "func", func: ent => orb4_loc = ent.pos }],
+		"ns-2809-1005": [{ type: "func", func: ent => orb5_loc = ent.pos }],
 
 		"am-2809-1000-428091001": [
 			{ type: "func", func: () => num_debuff = 1 },
@@ -184,32 +174,40 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", message: "Run to orb 2", message_RU: "Беги к шару 2 ", check_func: () => num_debuff === 2 },
 			{ type: "text", sub_type: "message", message: "Run to orb 3", message_RU: "Беги к шару 3 ", check_func: () => num_debuff === 3 },
 			{ type: "text", sub_type: "message", message: "Run to orb 4", message_RU: "Беги к шару 4 ", check_func: () => num_debuff === 4 },
-			{ type: "text", sub_type: "message", message: "Run to orb 5", message_RU: "Беги к шару 5 ", check_func: () => num_debuff === 5 }
+			{ type: "text", sub_type: "message", message: "Run to orb 5", message_RU: "Беги к шару 5 ", check_func: () => num_debuff === 5 },
+			{ type: "text", sub_type: "alert", delay: 47000, message: "Orbs or Puddles soon...", message_RU: "Скоро шары или лужи..." }
 		],
 
 		//Рес-байт
-		"qb-2809-1013-2809106": [{ type: "text", sub_type: "message", message: "Res-Bait!", message_RU: "Рес-байт!" }],
+		"qb-2809-1000-2809106": [{ type: "text", sub_type: "message", message: "Res-Bait!", message_RU: "Рес-байт!" }],
 
 		//Механика с лужами
-		"qb-2809-1000-2809104": [{ type: "text", sub_type: "message", message: "Remove puddles from the boss!", message_RU: "Лужи! Отнести от босса!" }],
-		"qb-2809-1000-2809107": [{ type: "text", sub_type: "message", message: "Stand in the puddles!", message_RU: "Встать в лужи!" }],
+		"qb-2809-1000-2809104": [
+			{ type: "text", sub_type: "message", message: "Remove puddles from the boss!", message_RU: "Лужи! Отнести от босса!" },
+			{ type: "text", sub_type: "alert", delay: 47000, message: "Orbs or Puddles soon...", message_RU: "Скоро шары или лужи..." }
+		],
+		"s-2809-1000-1307-0": [
+			{ type: "text", sub_type: "message", message: "Stand in the puddles!", message_RU: "Встать в лужи!" },
+			{ type: "text", sub_type: "alert", delay: 87000, message: "Puddles soon...", message_RU: "Скоро лужи..." }
+		],
 
 		//Механика красный/синий
 
-		"s-2809-1001-1102-0": [{ type: "func", check_func: () => num_debuff === 1, func: () => color = "red" }],
-		"s-2809-1002-1102-0": [{ type: "func", check_func: () => num_debuff === 2, func: () => color = "red" }],
-		"s-2809-1003-1102-0": [{ type: "func", check_func: () => num_debuff === 3, func: () => color = "red" }],
-		"s-2809-1004-1102-0": [{ type: "func", check_func: () => num_debuff === 4, func: () => color = "red" }],
-		"s-2809-1005-1102-0": [{ type: "func", check_func: () => num_debuff === 5, func: () => color = "red" }],
+		"ns-2809-1014": [{ type: "func", check_func: () => num_debuff === 1, func: () => color = "red" }],
+		"ns-2809-1015": [{ type: "func", check_func: () => num_debuff === 2, func: () => color = "red" }],
+		"ns-2809-1016": [{ type: "func", check_func: () => num_debuff === 3, func: () => color = "red" }],
+		"ns-2809-1017": [{ type: "func", check_func: () => num_debuff === 4, func: () => color = "red" }],
+		"ns-2809-1018": [{ type: "func", check_func: () => num_debuff === 5, func: () => color = "red" }],
+				
 		// awaiting qb-2809-1000-2809112
 		"s-2809-1000-1313-0": [
 			{ type: "func", func: side, args: [112], delay: 3000 },
-			{ type: "func", func: () => color = "blue", delay: 60000 }
+			{ type: "func", func: () => color = "blue", delay: 6000 }
 		],
 		// standby qb-2809-1000-2809111
 		"s-2809-1000-1312-0": [
 			{ type: "func", func: side, args: [111], delay: 3000 },
-			{ type: "func", func: () => color = "blue", delay: 60000 }
+			{ type: "func", func: () => color = "blue", delay: 6000 }
 		],
 
 		//Механика очистка
@@ -249,7 +247,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"h-2809-1000-39": [{ type: "text", sub_type: "message", message: "Crystals soon...", message_RU: "Скоро кристаллы..." }],
 
 		//10% волны
-		"h-2809-1000-09": [
+		"h-2809-1000-9": [
 			{ type: "text", sub_type: "message", message: "10%! Waves!", message_RU: "10%! Волны!" },
 			{ type: "func", func: () => crys_off = 1 }
 		]
