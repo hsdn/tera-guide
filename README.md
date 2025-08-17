@@ -71,6 +71,7 @@ id | Dungeon name | Название данжа
 2804 | Phantom hideout (Arborea Reborn) | Phantom hideout (Arborea Reborn)
 2809 | The Observatory (Arborea Reborn) | The Observatory (Arborea Reborn)
 2811 | Sea of Honor (Arborea Reborn) | Sea of Honor (Arborea Reborn)
+2813 | Beach River Outpost (Arborea Reborn) | Beach River Outpost (Arborea Reborn)
 3023 | Akalath Quarantine | Секретное подземелье крепости Берарк
 3026 | Corrupted Skynest | Логово Келсаика
 3027 | Forbidden Arena [Hagufna] | [Бессмертный воин] Арена безумия
