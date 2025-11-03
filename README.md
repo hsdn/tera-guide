@@ -84,6 +84,7 @@ id | Dungeon name | Название данжа
 3102 | Draakon Arena | Командный центр
 3103 | Forbidden Arena [Undying Warlord] | [Этерния] Арена безумия
 3104 | Catalepticon | Сонный паралич Лукмии
+3105 | Fusion Laboratory | Лаборатория Слияния
 3106 | Killing Grounds | Место казни
 3107 | Corrupted RK-9 Kennel | Разрушенный Ангар РК-9
 3111 | The Veil (Darkan) | The Veil (Darkan)
@@ -93,6 +94,7 @@ id | Dungeon name | Название данжа
 3202 | Draakon Arena (Hard) | Командный центр (сложно)
 3203 | Forbidden Arena [Nightmare Undying Warlord] | [Бессмертный] Арена безумия
 3204 | Catalepticon (Hard) | Сонный паралич Лукмии (сложно)
+3205 | Cursed Fusion Laboratory | Заколдованная лаборатория слияния
 3206 | Crimson Killing Grounds | Окровавленное место казни
 7011 | Shadow of the Gutrends (Guardian) | Живодеры и черная тень (хранитель)
 7015 | Escape from Balder's Refuge (Guardian) | Операция "Спасти Убежище Балдера" (хранитель)
@@ -170,7 +172,7 @@ id | Dungeon name | Название данжа
 * For questions and suggestions, ask in our Discord: https://discord.gg/sJzRJhtwWX
 
 ## Credits
-- **[Kasea](https://github.com/Kaseaa)** - Original developer of Tera-Guide module
+- **[Kasea](https://github.com/Kasea)** - Original developer of Tera-Guide module
 - **[michengs](https://github.com/michengs)** - Author of base code for most guides and module core
 - **[ZC](https://github.com/tera-mod)** - Provided coordinates for rendering attack areas and mechanics
 - **[Kuroine](https://github.com/Kuroine)** - Author of base code for the DA guide
