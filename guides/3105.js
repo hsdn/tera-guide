@@ -4,8 +4,27 @@
 
 module.exports = (dispatch, handlers, guide, lang) => {
 
+	const { player } = dispatch.require.library;
 	let print_lasers = true;
 	let print_donuts = true;
+
+	dispatch.hook("S_ABNORMALITY_BEGIN", dispatch._mod.majorPatchVersion >= 107 ? 5 : 4, event => {
+		if (event.id === 32051007) {
+			if (dispatch._mod.game.me.is(event.target)) {
+				handlers.text({ speech: false, sub_type: "notification", message: "Lasers on you", message_RU: "Лазеры на тебе" });
+			} else {
+				const member = player.playersInParty.get(event.target);
+				if (member) {
+					handlers.text({
+						speech: false,
+						sub_type: "message",
+						message: `Lasers on ${member.name}`,
+						message_RU: `Лазеры на ${member.name}`
+					});
+				}
+			}
+		}
+	});
 
 	return {
 		"ns-3105-1000": [
