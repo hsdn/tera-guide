@@ -116,18 +116,24 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 
 		"qb-3105-1000-31051002": [{ type: "text", sub_type: "message", message: "Shield!", message_RU: "Щит!" }], // <50%
+		"qb-3105-1000-32051002": "qb-3105-1000-31051002",
 		"s-3105-1000-123-0": [{ type: "text", sub_type: "message", message: "Break Failure", message_RU: "Щит не пробит" }],
 
 		"qb-3105-1000-31051004": [{ type: "text", sub_type: "message", message: "Bait (Lasers)", message_RU: "Байт (лазеры)" }], // range check
+		"qb-3105-1000-32051004": "qb-3105-1000-31051004",
 		"qb-3105-1000-31051005": [{ type: "text", sub_type: "message", message: "Bait", message_RU: "Байт" }], // get stun
+		"qb-3105-1000-32051005": "qb-3105-1000-31051005",
 		"qb-3105-1000-31051006": [{ type: "text", sub_type: "message", message: "Bait", message_RU: "Байт" }], // cast ress
+		"qb-3105-1000-32051006": "qb-3105-1000-31051006",
 		"qb-3105-1000-31051007": [{ type: "text", sub_type: "message", message: "Puddles", message_RU: "Лужи" }], // <40%
+		"qb-3105-1000-32051007": "qb-3105-1000-31051007",
 
 		// Core mech <35%
 		"qb-3105-1000-31051010": [
 			{ type: "text", sub_type: "message", message: "LASERS + WAVE", message_RU: "ЛАЗЕРЫ + ВОЛНА" },
 			{ type: "text", sub_type: "notification", message: "LASERS + WAVE", message_RU: "ЛАЗЕРЫ + ВОЛНА", speech: false }
 		],
+		"qb-3105-1000-32051010": "qb-3105-1000-31051010",
 		"s-3105-1000-310-0": [{ type: "spawn", func: "marker", args: [false, 0, 0, 0, 8000, true, ["Lasers", "Wave"]] }],
 		"s-3105-1000-304-0": [ // red
 			{ type: "text", sub_type: "message", message: "Wave (Dodge)", message_RU: "Волна (эвейд)", delay: 100 },
@@ -148,11 +154,17 @@ module.exports = (dispatch, handlers, guide, lang) => {
 				{ type: "func", func: () => print_lasers = true, delay: 16000 }
 			] }
 		],
+		"qb-3105-1001-32051011": "qb-3105-1001-31051011",
 		"qb-3105-1002-31051011": "qb-3105-1001-31051011",
+		"qb-3105-1002-32051011": "qb-3105-1001-31051011",
 		"qb-3105-1003-31051011": "qb-3105-1001-31051011",
+		"qb-3105-1003-32051011": "qb-3105-1001-31051011",
 		"qb-3105-1004-31051011": "qb-3105-1001-31051011",
+		"qb-3105-1004-32051011": "qb-3105-1001-31051011",
 		"qb-3105-1005-31051011": "qb-3105-1001-31051011",
+		"qb-3105-1005-32051011": "qb-3105-1001-31051011",
 		"qb-3105-1006-31051011": "qb-3105-1001-31051011",
+		"qb-3105-1006-32051011": "qb-3105-1001-31051011",
 
 		"s-3105-1001-101-0": [{ type: "spawn", func: "vector", args: [912, 0, 0, 0, 1600, 1000, 3000] }], // laser (basic)
 		"s-3105-1002-101-0": "s-3105-1001-101-0",
