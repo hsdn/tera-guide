@@ -101,6 +101,7 @@ id | Dungeon name | Название данжа
 9027 | Manaya's Core (Hard) | Обитель Манайи (сложно)
 9034 | Dreadspire | Жуткий шпиль страха
 9044 | Bahaar's Sanctum | Святилище Бахаара
+9048 | Sanctum of the Fire God (Agaia Online) | Sanctum of the Fire God (Agaia Online)
 9050 | Rift's Edge (Hard) | Край Разлома (сложно)
 9053 | Kezzel's Gorge | Ущелье Кеззела
 9054 | Bathysmal Rise (Hard) | Глубинный Храм (сложно)
