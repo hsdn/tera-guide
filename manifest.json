@@ -59,7 +59,7 @@
         "guides/9757.js": "281bfd592710f46ca06d8ef5994ef06c641bca4066164fd6b55dbe5d25b5df6f",
         "guides/9759.js": "258308cfec24b109f0a04e29275de1ca17860fba85ea172aa2b48269f542f63a",
         "guides/9768.js": "f9bc7b5cf768273ac5bff03d5b3e20dd95fd6ccf58d7fa951e33c60c2d42ace8",
-        "guides/9770.js": "e07f4cdba1b094a070926f926ea1b176d6403261241d680329724b0fe285eefb",
+        "guides/9770.js": "1012e2fffc3f2cce8bd8f6e37c0f31ba7334c2f107952693f5ed3c567d7c085f",
         "guides/9780.js": "290a193468e5061b3a5a0381cdd95d9955a578388adbc07e7118ff79ebfb46dd",
         "guides/9781.js": "14f91b5616b8fdac151986e130bbf29400dd06b84dfcd1a636cfc5eb1d6a7784",
         "guides/9782.js": "c3bc31da6b7a136444e6ea84a9d39653562689b35104c7caba6cc19c7d8ba9b4",
@@ -69,7 +69,7 @@
         "guides/9920.js": "3967e251360f8f935cbcde14fa675984cdd34d492ec5ac5f25acfdd8c951cebe",
         "guides/9935.js": "45e3fcbf902e8c8e1d80809c5ac21b0873e414850a3c3f16b96c3cdda5be6471",
         "guides/9939.js": "a576eec125f006a59363ec011802c4138441d5957149f015b41ef895875d8d0d",
-        "guides/9970.js": "9d2e3e6af84a63225385df069e74b4446db1eb7d088951b0024b201a0e55ceb3",
+        "guides/9970.js": "c817a8ff38d2c21230bf49efbc882d67c7376e6c59688b8f96f146f14702e0c1",
         "guides/9980.js": "30f050ab1ae519e559e43d83dca0999d1bdbd27b09834687a21201a87207668a",
         "guides/9981.js": "14f4d5b3ab2b58dbd05398490e228428673079ef047974c1d35c15a9eba1d463",
         "guides/9982.js": "605be3e9fdc872b89991868083ab4004458704417eaa14eb68232e6a94ae8853",
@@ -79,7 +79,7 @@
         "index.js": "e96e5d5833e0c28967b3ac43f017af0e0c0a33ffa686f20c4398d86222eba491",
         "lang/dungeons.js": "4c4a16197bf9898e0a420c082c67457b007253db9a125cfe875e69c0fd0b16d9",
         "lang/strings.js": "33e95fa48d7a386620e561e696e52d7f72253bb1b2de749a99336110aaaade34",
-        "module.json": "98beb73c7358e52dca03b51bafd337d4a7fc2bf429a8769d1d7fbb2e7c122553",
+        "module.json": "abbeb48f5d86ca3ba7d7e72f729f8cbc7c6fa97311359955a6d5351a514bf8e3",
         "settings_migrator.js": "febf6c909b0bcfb5ce27c8336ddd6fb6fdf83d7f0549516e9cddc740f72b8ea6"
     }
 }
