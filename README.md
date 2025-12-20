@@ -128,6 +128,7 @@ id | Dungeon name | Название данжа
 9782 | Grotto of Lost Souls | Мастерская Леандра
 9783 | Dark Reach Citadel | Крепость Тенебриса
 9794 | Thaumetal Refinery | Лаборатория Сайрекса
+9850 | Withering Dreadspire (Agaia Online) | Withering Dreadspire (Agaia Online)
 9916 | Sky Cruiser Endeavor (Hard) | Крейсер "Стремление" (Сложно)
 9920 | Antaroth's Abyss (Hard) | Омут Бездушного Антароса
 9935 | RK-9 Kennel (Hard) | Ангар совершенного RK-9
