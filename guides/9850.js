@@ -117,8 +117,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}
 	}
 
-	// 3rd challenge
-
 	// 4th challenge
 	let boss_enraged = false;
 	let back_print = false;
@@ -390,7 +388,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-850-6000-1106-0": [
 			{ type: "text", sub_type: "message", message: "Series + Impact", message_RU: "Серия + Удар" },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 225, 0, 375, 3000, 2000] }
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 225, 0, 375, 2500, 2000] }
 		],
 		"s-850-6000-1107-0": [{ type: "text", sub_type: "message", message: "Boms", message_RU: "Бомба" }],
 		"s-850-6000-1109-0": [
@@ -472,9 +470,9 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-850-7000-1135-0": [{ type: "text", sub_type: "message", message: "IN", message_RU: "К Боссу!" }],
 		"s-850-7000-1240-0": [
 			{ type: "text", sub_type: "message", message: "Donuts", message_RU: "Бублики!" },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 200, 0, 6000] },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 380, 0, 6000] },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 520, 0, 6000] }
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 200, 0, 6000] },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 360, 0, 6000] },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 520, 0, 6000] }
 		],
 		"s-850-7000-1401-0": [{ type: "text", sub_type: "message", message: "Plague/Regress", message_RU: "Регресс!!" }],
 		"s-850-7000-1402-0": [{ type: "text", sub_type: "message", message: "Sleep", message_RU: "Слип!!" }],
@@ -490,10 +488,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-850-7000-1138-0": [{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }],
 		"s-850-7000-1140-0": [
 			{ type: "text", sub_type: "message", message: "Donuts", message_RU: "Бублики!" },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 200, 0, 6000] },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 380, 0, 6000] },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 520, 0, 6000] },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 700, 0, 6000] }
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 200, 0, 6000] },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 360, 0, 6000] },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 520, 0, 6000] },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 45, 0, 680, 0, 6000] }
 		],
 		"s-850-7000-1154-0": [
 			{ type: "text", sub_type: "message", message: "OUT", message_RU: "От него => К нему" },
@@ -569,27 +567,23 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
-		"s-850-88516-1101-0": [{ type: "text", sub_type: "message", message: "Spin", message_RU: "Крутилка" }],
 		"s-850-88516-1103-0": [{ type: "text", sub_type: "message", message: "Front", message_RU: "Передний" }],
-		"s-850-88516-1104-0": [{ type: "text", sub_type: "message", message: "Push", message_RU: "Откид", delay: 1000 }],
+		"s-850-88516-1104-0": [{ type: "text", sub_type: "message", message: "Stun (AoE)", message_RU: "Стан (АОЕ)" }],
 		"s-850-88516-1105-0": [
 			{ type: "text", sub_type: "message", message: "Lasers", message_RU: "Лазеры" },
-			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд", delay: 4000 }
+			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд", delay: 2700 }
 		],
 		"s-850-88516-1106-0": [
 			{ type: "text", sub_type: "message", message: "Push", message_RU: "Откид" },
-			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд", delay: 2000 },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 220, 0, 3000] }
+			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд", delay: 1400 },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 0, 220, 0, 2000] }
 		],
 		"s-850-88516-1107-0": [{ type: "text", sub_type: "message", message: "Disc Left", message_RU: "Диск влево" }],
 		"s-850-88516-1108-0": [{ type: "text", sub_type: "message", message: "Disc Right", message_RU: "Диск вправо" }],
 		"s-850-88516-1109-0": [{ type: "text", sub_type: "message", message: "Spin", message_RU: "Крутилка" }],
-		// "s-850-88516-1206-0": [{ type: "text", sub_type: "message", message: "Target", message_RU: "Таргет" }], // ?
-		// "s-850-88516-1210-0": [{ type: "text", sub_type: "message", message: "Target", message_RU: "Таргет" }], // ?
 		"s-850-88516-1301-0": [{ type: "text", sub_type: "message", message: "Target", message_RU: "Таргет" }],
 		"s-850-88516-1303-0": [{ type: "text", sub_type: "message", message: "Back", message_RU: "Задний" }],
 		"dm-0-0-9885238": [{ type: "text", sub_type: "message", message: "Clones", message_RU: "Клоны" }],
-		"s-850-88516-2101-0": "s-850-88516-1101-0",
 		"s-850-88516-2103-0": "s-850-88516-1103-0",
 		"s-850-88516-2104-0": "s-850-88516-1104-0",
 		"s-850-88516-2105-0": "s-850-88516-1105-0",
@@ -597,8 +591,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-850-88516-2107-0": "s-850-88516-1107-0",
 		"s-850-88516-2108-0": "s-850-88516-1108-0",
 		"s-850-88516-2109-0": "s-850-88516-1109-0",
-		// "s-850-88516-2206-0": "s-850-88516-1206-0",
-		// "s-850-88516-2210-0": "s-850-88516-1210-0",
 
 		// 4th challenge
 		"ns-850-8504000": [{ type: "func", func: () => boss_enraged = false }],
@@ -722,7 +714,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-850-10000-1115-0": [{ type: "text", sub_type: "message", message_RU: "Хвост", message: "Tail" }],
 		"s-850-10000-1111-0": [{ type: "text", sub_type: "message", message_RU: "Хвост вперед", message: "Frontal Attack" }],
 		"s-850-10000-1109-0": [{ type: "text", sub_type: "message", message_RU: "АоЕ (таргет)", message: "AoE Target" }],
-		"s-850-10000-1104-0": [{ type: "text", sub_type: "message", message: "Stomp" }],
+		"s-850-10000-1104-0": [{ type: "text", sub_type: "message", message_RU: "Топот", message: "Stomp" }],
 		"s-850-10000-1107-0": [{ type: "text", sub_type: "message", message_RU: "Лазер", message: "Laser Attack" },
 			{ type: "spawn", func: "vector", args: [912, 360, 985, 180, 950, 0, 2500] },
 			{ type: "spawn", func: "vector", args: [912, 369, 995, 180, 950, 0, 2500] },
