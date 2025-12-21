@@ -586,7 +586,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"dm-0-0-9885238": [{ type: "text", sub_type: "message", message: "Clones", message_RU: "Клоны" }],
 		"s-850-88516-2103-0": "s-850-88516-1103-0",
 		"s-850-88516-2104-0": "s-850-88516-1104-0",
-		"s-850-88516-2105-0": "s-850-88516-1105-0",
+		"s-850-88516-2105-0": [
+			{ type: "text", sub_type: "message", message: "Lasers", message_RU: "Лазеры" },
+			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд", delay: 2200 }
+		],
 		"s-850-88516-2106-0": "s-850-88516-1106-0",
 		"s-850-88516-2107-0": "s-850-88516-1107-0",
 		"s-850-88516-2108-0": "s-850-88516-1108-0",
