@@ -9,18 +9,151 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	guide.type = SP;
 
 	let thirdboss_colour_to_use = null;
-	let thirdboss_counter = 0;
-	let thirdboss_timer = null;
+	let thirdboss_counter1 = 0;
+	let thirdboss_counter2 = 0;
+	let thirdboss_timer1 = null;
+	let thirdboss_timer2 = null;
+	let boss_enraged = false;
+	let boss_below_thirty_five = false;
 
-	function thirdboss_backattack_event() {
-		dispatch.clearTimeout(thirdboss_timer);
-		thirdboss_counter++;
+	function right_safe_handler_below(ent) { //s-2814-1000-1111-0//s-2814-1000-2111-0
+		// Only below 35%
+		if (!boss_below_thirty_five) return;
 
-		if (thirdboss_counter >= 2) {
+		if (boss_enraged) {
+			// ENRAGED OUT-IN
+			handlers.event([
+				{ type: "text", sub_type: "message", message: "Left Swipe - Right Swipe", message_RU: "Право" },
+				{ type: "text", sub_type: "message", message: "IN-OUT", message_RU: "Лево" },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 2500] },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 1500] },
+				{ type: "spawn", func: "marker", args: [false, 90, 300, 0, 1500, true, null] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+
+			]);
+		} else {
+			// NOT ENRAGED IN OUT
+			handlers.event([
+				{ type: "text", sub_type: "message", message: "Left Swipe - Right Swipe", message_RU: "Право" },
+				{ type: "text", sub_type: "message", message: "IN-OUT", message_RU: "Лево" },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 2500] },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 1500] },
+				{ type: "spawn", func: "marker", args: [false, 90, 300, 0, 1500, true, null] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+
+			]);
+
+		}
+	}
+
+	function right_safe_handler_above(ent) { //s-2814-1000-1111-0//s-2814-1000-2111-0
+		// BELOW 35% → ignore this mechanic
+		if (boss_below_thirty_five) return;
+
+		// Normal behavior (original content)
+		handlers.event([
+			{ type: "text", sub_type: "message", message: "Right safe", message_RU: "Право" },
+			{ type: "text", sub_type: "message", message: "OUT-IN", message_RU: "Наружу (от него > к нему)", delay: 1000 },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 1500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 1500] },
+			{ type: "spawn", func: "marker", args: [false, 90, 300, 0, 1500, true, null] },
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+
+		]);
+	}
+
+	function left_safe_handler_above(ent) { //s-2814-1000-1109-0////s-2814-1000-2109-0
+		// BELOW 35% → ignore this mechanic
+		if (boss_below_thirty_five) return;
+
+		// Normal behavior (original content)
+		handlers.event([
+			{ type: "text", sub_type: "message", message: "Left safe", message_RU: "Лево" },
+			{ type: "text", sub_type: "message", message: "IN-OUT", message_RU: "Внутрь (к нему > от него)", delay: 1000 },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 1500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 1500] },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 1500] },
+			{ type: "spawn", func: "marker", args: [false, 270, 300, 0, 1500, true, null] },
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+		]);
+	}
+
+	function left_safe_handler_below(ent) { //s-2814-1000-1109-0////s-2814-1000-2109-0
+		// Only below 35%
+		if (!boss_below_thirty_five) return;
+
+		if (boss_enraged) {
+			// ENRAGED OUT-IN
+			handlers.event([
+				{ type: "text", sub_type: "message", message: "Right Swipe- Left Swipe", message_RU: "Лево" },
+				{ type: "text", sub_type: "message", message: "OUT-IN", message_RU: "Лево" },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 2500] },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 1500] },
+				{ type: "spawn", func: "marker", args: [false, 270, 300, 0, 1500, true, null] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+			]);
+		} else {
+			// NOT ENRAGED IN OUT
+			handlers.event([
+				{ type: "text", sub_type: "message", message: "Right Swipe- Left Swipe", message_RU: "Лево" },
+				{ type: "text", sub_type: "message", message: "OUT-IN", message_RU: "Лево" },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 2500] },
+				{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 1500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 1500] },
+				{ type: "spawn", func: "marker", args: [false, 270, 300, 0, 1500, true, null] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
+				{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+			]);
+		}
+	}
+
+	function thirdboss_backattack_event1() {
+		dispatch.clearTimeout(thirdboss_timer1);
+		thirdboss_counter1++;
+
+		if (thirdboss_counter1 >= 2) {
 			handlers.text({ sub_type: "message", message: "Back Stun", message_RU: "Задний" });
 		}
 
-		thirdboss_timer = dispatch.setTimeout(() => thirdboss_counter = 0, 3000);
+		thirdboss_timer1 = dispatch.setTimeout(() => thirdboss_counter1 = 0, 3000);
+	}
+
+	function thirdboss_backattack_event2() {
+		dispatch.clearTimeout(thirdboss_timer2);
+		thirdboss_counter2++;
+
+		if (thirdboss_counter2 >= 2) {
+			handlers.text({ sub_type: "message", message: "Back Stun", message_RU: "Задний" });
+		}
+
+		thirdboss_timer2 = dispatch.setTimeout(() => thirdboss_counter2 = 0, 3000);
 	}
 
 	function thirdboss_cage_event(clockwise, ent) {
@@ -51,56 +184,119 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}
 	}
 
+	function spawn_cage_lazers() {
+		handlers.event([
+			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41723, y: -98299, z: 217, w: 1.69 }, tag: "light" },
+			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41347, y: -97969, z: 217, w: 1.69 }, tag: "light" },
+			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41349, y: -98667, z: 217, w: 1.69 }, tag: "light" },
+			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 40980, y: -98303, z: 217, w: 1.69 }, tag: "light" }
+		]);
+	}
+
+	function spawn_enrage_dependent_throne() {
+		if (boss_enraged) {
+			// Enraged Right Side
+			handlers.event([
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41082, y: -98303, z: 217, w: 2 }, tag: "light" },
+				//{ type: "spawn", func: "circle", args: [true, 445, 0, 0, 10, 350, 200, 5000] },
+				{ type: "text", sub_type: "message", message: "Right Side", message_RU: "От него!" }
+			]);
+		} else {
+			// Not enraged  Left Side
+			handlers.event([
+				//{ type: "spawn", func: "circle", args: [true, 445, 0, 0, 10, 350, 200, 5000] },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41602, y: -98309, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "text", sub_type: "message", message: "Left Side", message_RU: "От него!" }
+			]);
+		}
+	}
+
+	function spawn_enrage_dependent_entrance() {
+		if (boss_enraged) {
+			// Enraged Right Side
+			handlers.event([
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41602, y: -98309, z: 217, w: 1.69 }, tag: "light" },
+				//{ type: "spawn", func: "circle", args: [true, 445, 0, 0, 10, 350, 200, 5000] },
+				{ type: "text", sub_type: "message", message: "Right Side", message_RU: "От него!" }
+			]);
+		} else {
+			// Not enraged  Left Side
+			handlers.event([
+				//{ type: "spawn", func: "circle", args: [true, 445, 0, 0, 10, 350, 200, 5000] },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41082, y: -98303, z: 217, w: 2 }, tag: "light" },
+				{ type: "text", sub_type: "message", message: "Left Side", message_RU: "От него!" }
+			]);
+		}
+	}
+
 	return {
-		"nd-2814-1000-0": [
+		"ns-2814-1000": [
+			{ type: "func", func: () => boss_enraged = false },
+			{ type: "func", func: () => boss_below_thirty_five = false }
+
+		],
+		"nd-2814-1000": [
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
-		//debuff Glaze am-2814-1000-428141003 ???
+		"rb-2814-1000": [{ type: "func", func: () => boss_enraged = true }],
+		"re-2814-1000": [{ type: "func", func: () => boss_enraged = false }],
+		// debuff Glaze am-2814-1000-428141003 ???
 
 		"s-2814-1000-3101-0": [{ type: "text", sub_type: "message", message: "Boss Swap RED", message_RU: "Смена цвета: КРАСНЫЙ" }],
 		"s-2814-1000-3102-0": [{ type: "text", sub_type: "message", message: "Boss Swap BLUE", message_RU: "Смена цвета: СИНИЙ" }],
-		"s-2814-1000-3103-0": [{ type: "text", sub_type: "message", message: "[DEBUFF] Closest player", message_RU: "[ДЕБАФ] Ближние" }],
-		"s-2814-1000-3104-0": [{ type: "text", sub_type: "message", message: "[DEBUFF] Furthest player", message_RU: "[ДЕБАФ] Дальние" }],
+		"s-2814-1000-3103-0": [{ type: "text", sub_type: "message", message: "[DEBUFF] Closest player", message_RU: "[ДЕБАФФ] Ближайший игрок" }],
+		"s-2814-1000-3104-0": [{ type: "text", sub_type: "message", message: "[DEBUFF] Furthest player", message_RU: "[ДЕБАФФ] Самый дальний игрок" }],
 		"s-2814-1000-3105-0": [{ type: "text", sub_type: "message", message: "Slow Jump", message_RU: "Медленный прыжок" }],
-		"s-2814-1000-1201-0": [{ type: "text", sub_type: "message", message: "INCOMING SWIPE-DONUTS MECHANIC", message_RU: "СВАЙП-БУБЛИКИ" }],
+		"s-2814-1000-3110-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Inverted-Start 1", message_RU: "Механика сфер - Обратная старт 1" }],
+		"s-2814-1000-3111-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Inverted-Start 2", message_RU: "Механика сфер - Обратная старт 2" }],
+		"s-2814-1000-3112-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Inverted-Start 3", message_RU: "Механика сфер - Обратная старт 3" }],
+		"s-2814-1000-1301-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Normal-Start 1", message_RU: "Механика сфер - Нормальная - Начало 1" }],
+		"s-2814-1000-1302-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Normal-Start 2", message_RU: "Механика сфер - Нормальная - Начало 2" }],
+		"s-2814-1000-1303-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Normal-Start 3", message_RU: "Механика сфер - Нормальная - Начало 3" }],
+		//"s-2814-1000-1304-0": [{ type: "text", sub_type: "message", message: "Orbs Mechanic-Circle Spawn and Attack", message_RU: "Механика сфер - Появление и атака" }],
+		"s-2814-1000-1201-0": [{ type: "text", sub_type: "message", message: "INCOMING SWIPE-DONUTS MECHANIC", message_RU: "МЕХАНИКА СВАЙП БУБЛИКОВ" }],
 
-		//FOR 35% BOSS
-		"h-2814-1000-35": [{ type: "text", sub_type: "message", message: "REMEMBER DOUBLE SWIPE BEFORE DONUTS NOW", message_RU: "Помните: двойной свайп перед бубликами сейчас" }],
-		"s-2814-1000-3113-0": [{ type: "text", sub_type: "message", message: "Right Swipe", message_RU: "Правый свайп" }],
-		"s-2814-1000-3114-0": [{ type: "text", sub_type: "message", message: "Left Swipe", message_RU: "Левый свайп" }],
+		// FOR 35% BOSS
+		"h-2814-1000-35": [{ type: "func", func: () => boss_below_thirty_five = true }],
 
-		"s-2814-1000-1104-0": [{ type: "func", func: thirdboss_backattack_event }],
+		//"s-2814-1000-3113-0": [
+		//	{ type: "text", sub_type: "message", message: "Right Swipe", message_RU: "Правый свайп" }
+		//],
+		//"s-2814-1000-3114-0": [
+		//	{ type: "text", sub_type: "message", message: "Left Swipe", message_RU: "Левый свайп" }
+		//],
+		"s-2814-1000-3115-0": [{ type: "text", sub_type: "message", message: "Final Cage", message_RU: "Финальная клетка" }],
+		//"s-2814-1000-3116-0": [{ type: "text", sub_type: "message", message: "Escape", message_RU: "Побег" }],
+		//"s-2814-1000-3117-0": [{ type: "text", sub_type: "message", message: "Await 5s", message_RU: "Жди 5 секунд" }],
+		//"s-2814-1000-3118-0": [{ type: "text", sub_type: "message", message: "Await 10s", message_RU: "Жди 10 секунд" }],
+		//"s-2814-1000-5000-0": [{ type: "text", sub_type: "message", message: "[Antaroth]-DeathSkill", message_RU: "" }],
+		//"s-2814-1000-5001-0": [{ type: "text", sub_type: "message", message: "[Antaroth]-[Corrupted]-Shield Phase", message_RU: "" }],
+		//"s-2814-1000-5002-0": [{ type: "text", sub_type: "message", message: "[Arman]-Frenzy-Stun and Hide Self", message_RU: "" }],
+
+		// FOR 15% BOSS
+		"dm-0-0-9206011": [
+			{ type: "func", func: spawn_cage_lazers },
+			{ type: "text", sub_type: "message", message: "CAGE LAZERS", message_RU: "ЛАЗЕРЫ КЛЕТКИ" }
+		],
+
+		"s-2814-1000-1104-0": [{ type: "func", func: thirdboss_backattack_event1 }],
+		"s-2814-1000-1102-0": [{ type: "func", func: thirdboss_backattack_event2 }],
+
 		"s-2814-1000-1105-0": [{ type: "text", sub_type: "message", message: "Target Cage", message_RU: "Клетка (таргет)" }],
 		"s-2814-1000-1119-0": [{ type: "spawn", func: "circle", args: [true, 553, 0, -325, 12, 325, 0, 2000] }],
 		"s-2814-1000-1107-0": [{ type: "text", sub_type: "message", message: "Random Jump", message_RU: "Прыжок (стан)" }],
 		"s-2814-1000-1107-1": [{ type: "spawn", func: "circle", args: [false, 553, 0, 85, 12, 250, 0, 2000] }],
-		"s-2814-1000-1109-0": [
-			{ type: "text", sub_type: "message", message: "Left safe", message_RU: "Лево" },
-			{ type: "text", sub_type: "message", message: "Inward (player In > Out)", message_RU: "Внутрь (к нему > от него)", delay: 1000 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 1500] },
-			{ type: "spawn", func: "marker", args: [false, 270, 300, 0, 1500, true, null] },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+
+		"s-2814-1000-1109-0": [ //left safe
+			{ type: "func", func: left_safe_handler_above },
+			{ type: "func", func: left_safe_handler_below }
 		],
-		"s-2814-1000-1111-0": [
-			{ type: "text", sub_type: "message", message: "Right safe", message_RU: "Право" },
-			{ type: "text", sub_type: "message", message: "Outward (player Out > In)", message_RU: "Наружу (от него > к нему)", delay: 1000 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 1500] },
-			{ type: "spawn", func: "marker", args: [false, 90, 300, 0, 1500, true, null] },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 18, 157, 1500, 4000] },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 307, 1500, 4000] }
+		"s-2814-1000-1111-0": [ //right safe
+			{ type: "func", func: right_safe_handler_above },
+			{ type: "func", func: right_safe_handler_below }
 		],
+
 		"s-2814-1000-1113-0": [{ type: "text", sub_type: "message", message: "Front | Back Stun", message_RU: "Передний | Задний" }],
 		"s-2814-1000-1115-0": [{ type: "text", sub_type: "message", message: "Spin Attack", message_RU: "Круговая" }],
 		"s-2814-1000-1120-0": [{ type: "text", sub_type: "message", message: "Energy Beam (Slow)", message_RU: "Волна (медленно)" }],
@@ -132,22 +328,21 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-2814-1000-2202-0": "s-2814-1000-1202-0",
 		"s-2814-1000-2206-0": "s-2814-1000-1206-0",
 
-		"dm-0-0-9206007": [{ type: "text", sub_type: "message", message: "Iframe and Entrance clones", message_RU: "Эвейд и клоны входа" },
-			{ type: "text", sub_type: "message", message: "1", message_RU: "Эвейд!", delay: 3000 },
-			{ type: "text", sub_type: "message", message: "2", message_RU: "Эвейд!", delay: 2000 },
-			{ type: "text", sub_type: "message", message: "3", message_RU: "Эвейд!", delay: 1000 },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41612, y: -98299, z: 217, w: 3.13 }, ownerName: "ENTRANCE", message: "i love guide" },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41589, y: -98738, z: 217, w: 3.13 }, ownerName: "ENTRANCE", message: "i love guide" },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41607, y: -97869, z: 217, w: 3.13 }, ownerName: "ENTRANCE", message: "i love guide" }
+		// ENTRANCE
+		"dm-0-0-9206007": [
+			{ type: "func", func: spawn_enrage_dependent_entrance },
+			{ type: "text", sub_type: "message", message: "Entrance clones", message_RU: "Клоны входа" },
+			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд!", delay: 2000 },
+			{ type: "text", sub_type: "message", message: "1", message_RU: "Эвейд!", delay: 1500 },
+			{ type: "text", sub_type: "message", message: "2", message_RU: "Эвейд!", delay: 1000 }
 		],
-		"dm-0-0-9206006": [{ type: "text", sub_type: "message", message: "Iframe and Throne clones", message_RU: "Эвейд и клоны трона" },
-			{ type: "text", sub_type: "message", message: "1", message_RU: "Эвейд!", delay: 3000 },
-			{ type: "text", sub_type: "message", message: "2", message_RU: "Эвейд!", delay: 2000 },
-			{ type: "text", sub_type: "message", message: "3", message_RU: "Эвейд!", delay: 1000 },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41120, y: -98205, z: 217, w: -0.18 }, ownerName: "THRONE", message: "i love guide" },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41098, y: -98517, z: 217, w: -0.18 }, ownerName: "THRONE", message: "i love guide" },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41109, y: -97859, z: 217, w: -0.18 }, ownerName: "THRONE", message: "i love guide" },
-			{ type: "spawn", sub_type: "build_object", id: 1, sub_delay: 10000, pos: { x: 41106, y: -98808, z: 217, w: -0.18 }, ownerName: "THRONE", message: "i love guide" }
+		// THRONE
+		"dm-0-0-9206006": [
+			{ type: "func", func: spawn_enrage_dependent_throne },
+			{ type: "text", sub_type: "message", message: "Throne clones", message_RU: "Клоны трона" },
+			{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд!", delay: 2000 },
+			{ type: "text", sub_type: "message", message: "1", message_RU: "Эвейд!", delay: 1500 },
+			{ type: "text", sub_type: "message", message: "2", message_RU: "Эвейд!", delay: 1000 }
 
 		],
 		"s-2814-1000-1410-0": [{ type: "text", sub_type: "message", message: "Cage", message_RU: "Клетка" }],
