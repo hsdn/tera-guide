@@ -98,7 +98,7 @@ id | Dungeon name | Название данжа
 3204 | Catalepticon (Hard) | Сонный паралич Лукмии (сложно)
 3205 | Cursed Fusion Laboratory | Заколдованная лаборатория слияния
 3206 | Crimson Killing Grounds | Окровавленное место казни
-3920 | Искаженный Омут (Asura) | Cursed Antaroth's Abyss (Asura)
+3920 | Cursed Antaroth's Abyss (Asura) | Искаженный Омут (Asura)
 7011 | Shadow of the Gutrends (Guardian) | Живодеры и черная тень (хранитель)
 7015 | Escape from Balder's Refuge (Guardian) | Операция "Спасти Убежище Балдера" (хранитель)
 9027 | Manaya's Core (Hard) | Обитель Манайи (сложно)
