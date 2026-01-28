@@ -188,12 +188,21 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	function spawn_cage_lazers() {
 		if (!boss_ent) return;
 
-		handlers.event([
-			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41723, y: -98299, z: 217, w: 1.69 }, tag: "light" },
-			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41347, y: -97969, z: 217, w: 1.69 }, tag: "light" },
-			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41349, y: -98667, z: 217, w: 1.69 }, tag: "light" },
-			{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 40980, y: -98303, z: 217, w: 1.69 }, tag: "light" }
-		], boss_ent);
+		if (boss_enraged) {
+			handlers.event([
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41723, y: -98299, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41347, y: -97969, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41349, y: -98667, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 40980, y: -98303, z: 217, w: 1.69 }, tag: "light" }
+			], boss_ent);
+		} else {
+			handlers.event([
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41628, y: -98582, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41626, y: -98014, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41061, y: -98013, z: 217, w: 1.69 }, tag: "light" },
+				{ type: "spawn", sub_type: "item", id: 88704, sub_delay: 10000, pos: { x: 41049, y: -98590, z: 217, w: 1.69 }, tag: "light" }
+			], boss_ent);
+		}
 	}
 
 	function spawn_enrage_dependent_throne() {
