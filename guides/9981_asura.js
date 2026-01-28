@@ -1,4 +1,4 @@
-﻿// Velik's Sanctuary (Hard) MT
+﻿// Velik's Sanctuary (Hard) Asura
 //
 // made by michengs / HSDN / vathsq / Calvary / ITunk / Vampic
 
@@ -6,87 +6,16 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	guide.type = SP;
 
 	let boss_enraged = false;
-	let back_print = false;
-	let back_time = 0;
-	let end_back_time = 0;
-	let is_one_back = false;
-	let counter = 0;
-	let counter1_date = null;
-	let prev_back_attack = 0;
-	let prev_date = 0;
-	let attack_360 = false;
-	let thirdboss_eye = false;
 	let are_you_afraid_of_me_continue = false;
-	// new
-
-	function boss_backattack_event() {
-		end_back_time = new Date() - back_time;
-
-		if (!back_print) {
-			back_print = true;
-			is_one_back = end_back_time > 0 && end_back_time < 1500;
-
-			if (is_one_back) {
-				handlers.text({
-					sub_type: "message",
-					message: "360"
-				});
-			}
-		}
-
-		dispatch.setTimeout(() => back_print = false, 3500);
-	}
-
-	function boss_backattack_event_new(curr, ent) {
-		const start = new Date();
-		const tmp = prev_date;
-		prev_date = start;
-
-		const time_diff = start - tmp;
-		const prev = prev_back_attack;
-
-		prev_back_attack = curr;
-
-		let back_combo_time_diff = 5000;
-		if (counter1_date != null) {
-			back_combo_time_diff = start - counter1_date;
-		}
-
-		if (prev === 1106 && curr === 1103 && time_diff < 1000) {
-			handlers.text({
-				sub_type: "message",
-				message: "360"
-			});
-		} else if (prev === 1103 && curr === 1105 && time_diff < 1000) {
-			counter = 1;
-			counter1_date = new Date();
-		} else if (prev === 1105 && curr === 1106 && counter === 1 && time_diff < 1500 && back_combo_time_diff < 1500) {
-			counter = 2;
-		} else if (prev === 1106 && curr === 1108 && counter === 2 && time_diff < 1000 && back_combo_time_diff < 2000) {
-			attack_360 = true;
-			handlers.text({
-				sub_type: "message",
-				message: "2x360"
-			});
-		} else {
-			counter = 0;
-			counter1_date = null;
-		}
-	}
-
 	let first_fifty = false;
-	let prev_attack = 0;
 	let triple_swipe_remaining = 0;
 
 	function first_swipe_event(skillid, ent) {
 		let double = "";
 		let double_ru = "";
-		if ((first_fifty || attack_360) && triple_swipe_remaining === 0) {
+		if (first_fifty && triple_swipe_remaining === 0) {
 			double = "(Double)";
 			double_ru = "(Двойной)";
-			if (attack_360) {
-				attack_360 = false;
-			}
 		}
 
 		if (triple_swipe_remaining > 0) {
@@ -102,7 +31,17 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 1500] },
 			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 1500] },
 			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 1500] }
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 1500] },
+
+			// Left after right when double swipe
+			{ type: "text", sub_type: "message", message: "Left", message_RU: "Левый", delay: 2000, check_func: () => double },
+			{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "marker", args: [false, 60, 100, 2000, 1500, true, null], check_func: () => double },
+			{ type: "spawn", func: "marker", args: [false, 130, 100, 2000, 1500, true, null], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 2000, 1500], check_func: () => double }
 		];
 		// 1402 non-enraged
 		const leftSafe = [
@@ -113,7 +52,17 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 1500] },
 			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 1500] },
 			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 1500] },
-			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 1500] }
+			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 1500] },
+
+			// Right after left when double swipe
+			{ type: "text", sub_type: "message", message: "Right", message_RU: "Правый", delay: 2000, check_func: () => double },
+			{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "marker", args: [false, 300, 100, 2000, 1500, true, null], check_func: () => double },
+			{ type: "spawn", func: "marker", args: [false, 230, 100, 2000, 1500, true, null], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 2000, 1500], check_func: () => double },
+			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 2000, 1500], check_func: () => double }
 		];
 
 		if (skillid === 1401) {
@@ -145,75 +94,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}, 55000);
 	}
 
-	let last_donut_msg = null;
-	let last_donut_msg_ru = null;
-
-	function first_fly_mech(skillid) {
-		const safe_enraged_markers = [
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 0, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 60, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 120, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 180, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 240, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 300, 750, 0, 1500] }
-		];
-		const safe_unenraged_markers = [
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 30, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 90, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 150, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 210, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 270, 750, 0, 1500] },
-			{ type: "spawn", func: "vector", args: [548, 0, 0, 330, 750, 0, 1500] }
-		];
-
-		if (!first_fifty) {
-			if (prev_attack === 1113) {
-				// Donuts
-				handlers.event([
-					{ type: "text", sub_type: "message", message: "Donuts", message_RU: "Бублики" },
-					{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 10, 300, 0, 6000] }
-				]);
-			} else if (boss_enraged) {
-				handlers.event(safe_enraged_markers);
-				handlers.text({ sub_type: "notification", message: "Pizza + Enraged", message_RU: "Пицца + В раге" });
-			} else {
-				handlers.event(safe_unenraged_markers);
-				handlers.text({ sub_type: "notification", message: "Pizza + Un enraged", message_RU: "Пицца + Без раги" });
-			}
-		} else {
-			handlers.event([{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 10, 300, 0, 6000] }]);
-
-			if (boss_enraged) {
-				handlers.event(safe_enraged_markers);
-			} else {
-				handlers.event(safe_unenraged_markers);
-			}
-
-			if ((skillid === 1308 || skillid === 1309) && last_donut_msg == null) {
-				last_donut_msg = skillid === 1308 ? "last: IN" : "last: OUT";
-				last_donut_msg_ru = skillid === 1308 ? "последний: К нему" : "последний: От него";
-				handlers.event([{ type: "text", sub_type: "notification", message: last_donut_msg, message_RU: last_donut_msg_ru, delay: 1000 }]);
-				dispatch.setTimeout(() => last_donut_msg = null, 7500);
-			}
-		}
-		prev_attack = 0;
-	}
-
 	function reset_backevent() {
-		back_print = false;
-		back_time = 0;
-		end_back_time = 0;
-		is_one_back = false;
-		counter = 0;
-		counter1_date = null;
-		prev_back_attack = 0;
-		prev_date = 0;
-
 		boss_enraged = false;
 		triple_swipe_remaining = 0;
-		attack_360 = false;
 		first_fifty = false;
-		prev_attack = 0;
 	}
 
 	let second_swipes_remaining = 0;
@@ -434,7 +318,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		run_mech_active = false;
 		thirdboss_soul_world = false;
 		thirdboss_fifty = false;
-		thirdboss_eye = false;
 		are_you_afraid_of_me_continue = false;
 	}
 
@@ -452,21 +335,14 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", message: "49%" },
 			{ type: "func", func: () => first_fifty = true }
 		],
-		"s-981-1000-1102-0": [{ type: "func", func: () => back_time = new Date() }],
-		"s-981-1000-1101-0": [{ type: "func", func: boss_backattack_event }],
-		"s-981-1000-1106-0": [{ type: "func", func: boss_backattack_event_new, args: [1106] }],
-		"s-981-1000-1105-0": [{ type: "func", func: boss_backattack_event_new, args: [1105] }],
-		"s-981-1000-1103-0": [{ type: "func", func: boss_backattack_event_new, args: [1103] }],
-		"s-981-1000-1108-0": [{ type: "func", func: boss_backattack_event_new, args: [1108] }],
 		"s-981-1000-1401-0": [{ type: "func", func: first_swipe_event, args: [1401] }],
 		"s-981-1000-1402-0": [{ type: "func", func: first_swipe_event, args: [1402] }],
+		"s-981-1000-1301-0": [{ type: "text", sub_type: "message", message: "AoE (Silence)", message_RU: "АОЕ (безмолвие)" }],
 		"s-981-1000-1303-0": [{ type: "text", sub_type: "message", message: "Spin", message_RU: "Крутилка" }],
 		"s-981-1000-1304-0": [
-			{ type: "func", func: first_fly_mech, args: [1304] },
-			{ type: "text", sub_type: "message", message: "Donuts | Pizza", message_RU: "Бублики | Пицца", check_func: () => first_fifty }
+			{ type: "text", sub_type: "message", message: "Donuts", message_RU: "Бублики", check_func: () => first_fifty }
 		],
 		"s-981-1000-1308-0": [
-			{ type: "func", func: first_fly_mech, args: [1308], check_func: () => first_fifty },
 			{ type: "text", sub_type: "message", message: "Out", message_RU: "Наружу" },
 			{ type: "spawn", func: "marker", args: [false, 75, 370, 0, 1000, true, null] },
 			{ type: "spawn", func: "marker", args: [false, 165, 370, 0, 1000, true, null] },
@@ -474,7 +350,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "marker", args: [false, 345, 370, 0, 1000, true, null] }
 		], //out
 		"s-981-1000-1309-0": [
-			{ type: "func", func: first_fly_mech, args: [1309], check_func: () => first_fifty },
 			{ type: "text", sub_type: "message", message: "In", message_RU: "Внутрь" },
 			{ type: "spawn", func: "marker", args: [false, 75, 100, 0, 1000, true, null] },
 			{ type: "spawn", func: "marker", args: [false, 165, 100, 0, 1000, true, null] },
@@ -499,11 +374,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", delay: 400, message: "2" },
 			{ type: "text", sub_type: "message", delay: 800, message: "1" },
 			{ type: "text", sub_type: "message", delay: 1200, message: "Dodge", message_RU: "Эвейд" }],
-		"s-981-1000-1111-0": [{ type: "func", func: () => prev_attack = 1111 }],
-		"s-981-1000-1113-0": [
-			{ type: "text", sub_type: "message", message: "Front | AoEs", message_RU: "Передняя | AOE" },
-			{ type: "func", func: () => prev_attack = 1113 }
-		],
+		"s-981-1000-1111-0": [{ type: "text", sub_type: "message", message: "Back 360", message_RU: "Задняя 360" }],
+		"s-981-1000-1113-0": [{ type: "text", sub_type: "message", message: "Front | AoEs", message_RU: "Передняя | AOE" }],
 		"s-981-1000-1114-0": [
 			{ type: "text", sub_type: "message", message: "Bait on res", message_RU: "Байт на рес" },
 			{ type: "spawn", func: "vector", args: [553, 90, 150, 0, 1300, 0, 2500] },
@@ -520,12 +392,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-981-1000-2114-0": "s-981-1000-1114-0",
 		"s-981-1000-2115-0": "s-981-1000-1115-0",
 		"s-981-1000-2117-0": "s-981-1000-1117-0",
-		"s-981-1000-2101-0": "s-981-1000-1101-0",
-		"s-981-1000-2102-0": "s-981-1000-1102-0",
-		"s-981-1000-2103-0": "s-981-1000-1103-0",
-		"s-981-1000-2105-0": "s-981-1000-1105-0",
-		"s-981-1000-2106-0": "s-981-1000-1106-0",
-		"s-981-1000-2108-0": "s-981-1000-1108-0",
 		"qb-981-1000-98103": [{ type: "text", sub_type: "message", message: "Lead circle to the stone", message_RU: "Отвести круг к пилону" }],
 		"qb-981-1000-98106": [{ type: "text", sub_type: "message", message: "Lead circles to the stone", message_RU: "Отвести круги к пилону" }],
 		"dm-0-0-9981005": [
@@ -558,140 +424,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", delay: 2000, message: "2" },
 			{ type: "text", sub_type: "message", delay: 3000, message: "1" }
 		],
-		"s-981-2000-1138-0": [ // T1
-			{
-				type: "event", delay: 4500, args: [
-					{ type: "text", sub_type: "notification", message: "Side > Out > In > Side", message_RU: "В сторону > Наружу > Внутрь > В сторону" },
-					// x6 normal
-					{ type: "spawn", func: "marker", args: [false, 15, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 135, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 195, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 315, 270, 0, 1500, true, null] },
-					// in circle
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 270, 1500, 1500, true, null] },
-					// out circle + x4
-					{ type: "spawn", func: "marker", args: [false, 75, 170, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 170, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 170, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 170, 2500, 1500, true, null] },
-					// x6 reverse
-					{ type: "spawn", func: "marker", args: [false, 45, 170, 3000, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 105, 170, 3000, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 170, 3000, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 225, 170, 3000, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 285, 170, 3000, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 170, 3000, 3000, true, null] }
-				]
-			}
-		],
-		"s-981-2000-1139-0": [ // T2
-			{
-				type: "event", delay: 5500, args: [
-					{ type: "text", sub_type: "notification", message: "Side > Side > In > Out", message_RU: "В сторону > В сторону > Внутрь > Наружу" },
-					// x6 reverse
-					{ type: "spawn", func: "marker", args: [false, 45, 170, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 105, 170, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 170, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 225, 170, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 285, 170, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 170, 0, 1500, true, null] },
-					// x6 normal
-					{ type: "spawn", func: "marker", args: [false, 15, 170, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 75, 170, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 135, 170, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 195, 170, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 170, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 315, 170, 1500, 1500, true, null] },
-					// out circle + x4
-					{ type: "spawn", func: "marker", args: [false, 75, 170, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 170, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 170, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 170, 2500, 1500, true, null] },
-					// in circle
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 3500, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 270, 3500, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 3500, 3000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 270, 3500, 3000, true, null] }
-				]
-			}
-		],
-		"s-981-2000-1140-0": [ // T1
-			{
-				type: "event", delay: 4500, args: [
-					{ type: "text", sub_type: "notification", message: "Out > Side > Side > In", message_RU: "Наружу > В сторону > В сторону > Внутрь" },
-					// in circle
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 270, 0, 1500, true, null] },
-					// x6 reverse
-					{ type: "spawn", func: "marker", args: [false, 45, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 105, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 225, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 285, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 270, 1500, 1500, true, null] },
-					// x6 normal
-					{ type: "spawn", func: "marker", args: [false, 15, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 135, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 195, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 315, 270, 2500, 1500, true, null] },
-					// out circle + x4
-					{ type: "spawn", func: "marker", args: [false, 75, 170, 3000, 4500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 170, 3000, 4500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 170, 3000, 4500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 170, 3000, 4500, true, null] }
-				]
-			}
-		],
-		"s-981-2000-1141-0": [ // T2
-			{
-				type: "event", delay: 5500, args: [
-					{ type: "text", sub_type: "notification", message: "Side > Side > Out > In", message_RU: "В сторону > В сторону > Наружу > Внутрь" },
-					// x6 normal
-					{ type: "spawn", func: "marker", args: [false, 15, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 135, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 195, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 0, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 315, 270, 0, 1500, true, null] },
-					// x6 reverse
-					{ type: "spawn", func: "marker", args: [false, 45, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 105, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 225, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 285, 270, 1500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 270, 1500, 1500, true, null] },
-					// in circle
-					{ type: "spawn", func: "marker", args: [false, 75, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 270, 2500, 1500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 270, 2500, 1500, true, null] },
-					// out circle + x4
-					{ type: "spawn", func: "marker", args: [false, 75, 170, 3500, 3500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 165, 170, 3500, 3500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 255, 170, 3500, 3500, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 345, 170, 3500, 3500, true, null] }
-				]
-			}
-		],
-		/* // cage - only mark safe spot for last pattern
-		"s-981-2000-1138-0": [
-			{ type: "spawn", func: "marker", args: [false, 75, 170, 0, 11000, false, null] },
-			{ type: "spawn", func: "marker", args: [false, 165, 170, 0, 11000, false, null] },
-			{ type: "spawn", func: "marker", args: [false, 255, 170, 0, 11000, false, null] },
-			{ type: "spawn", func: "marker", args: [false, 345, 170, 0, 11000, false, null] }
-		],
-		"s-981-2000-1139-0": "s-981-2000-1138-0",
-		"s-981-2000-1140-0": "s-981-2000-1138-0",
-		"s-981-2000-1141-0": "s-981-2000-1138-0",*/
 		"s-981-2000-1110-0": [{ type: "text", sub_type: "message", message: "Back Move", message_RU: "Рывок назад" }],
 		"s-981-2000-1111-0": [{ type: "text", sub_type: "message", message: "360 attack", message_RU: "Круговая" }],
 		"s-981-2000-1114-0": [{ type: "text", sub_type: "message", message: "Pull", message_RU: "Притяжка" }],
@@ -799,10 +531,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-981-3000-2130-0": "s-981-3000-1130-0",
 		//
 		"s-981-3000-1116-0": [
-			{ type: "text", sub_type: "message", message: "Donut (Out > In > Out)", message_RU: "Бублики (от него > к нему > от него)", check_func: () => !thirdboss_soul_world && thirdboss_eye },
-			{ type: "text", sub_type: "message", message: "Donut (In > Out > In)", message_RU: "Бублики (к нему > от него > к нему)", check_func: () => thirdboss_soul_world && thirdboss_eye },
-			{ type: "text", sub_type: "message", message: "Donut x2 (Out > In > Out)", message_RU: "Бублики x2 (от него > к нему > от него)", check_func: () => !thirdboss_soul_world && thirdboss_fifty && !thirdboss_eye },
-			{ type: "text", sub_type: "message", message: "Donut x2 (In > Out > In)", message_RU: "Бублики x2 (к нему > от него > к нему)", check_func: () => thirdboss_soul_world && thirdboss_fifty && !thirdboss_eye },
+			{ type: "text", sub_type: "message", message: "Donut (Out > In > Out)", message_RU: "Бублики (от него > к нему > от него)", check_func: () => !thirdboss_soul_world },
+			{ type: "text", sub_type: "message", message: "Donut (In > Out > In)", message_RU: "Бублики (к нему > от него > к нему)", check_func: () => thirdboss_soul_world },
 			{ type: "spawn", func: "circle", args: [false, 445, 0, 41, 10, 195, 0, 6000] },
 			{ type: "spawn", func: "circle", args: [false, 445, 0, 41, 10, 345, 0, 6000] },
 			{ type: "spawn", func: "circle", args: [false, 445, 0, 41, 10, 515, 0, 6000] },
@@ -924,11 +654,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-981-3000-2151-0": "s-981-3000-1151-0",
 		"s-981-3000-2152-0": "s-981-3000-1152-0",
 		"s-981-3000-2152-1": "s-981-3000-1152-1",
-		"s-981-3000-2138-0": "s-981-3000-1138-0",
-		"s-981-3000-3102-0": [
-			{ type: "func", func: () => thirdboss_eye = true },
-			{ type: "func", func: () => thirdboss_eye = false, delay: 10000 }
-		],
-		"s-981-3000-3202-0": "s-981-3000-3102-0"
+		"s-981-3000-2138-0": "s-981-3000-1138-0"
 	};
 };
