@@ -593,7 +593,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-981-3000-1401-0": [
 			{ type: "text", sub_type: "message", message: "Wave (Dodge) | Plague/Regress", message_RU: "Волна (эвейд) | Регресс" },
-			{ type: "text", sub_type: "message", message: "Puddles! (Spread)", message_RU: "Лужи! (отдельно)", delay: 1900 },
+			{ type: "text", sub_type: "message", message: "Puddles! (Spread)", message_RU: "Лужи! (отдельно)", delay: 1500 },
 			{ type: "spawn", func: "circle", args: [false, 912, 0, 0, 15, 175, 1000, 7000] },
 			{ type: "func", func: () => thirdboss_soul_world = true }
 		],
