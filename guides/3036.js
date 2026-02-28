@@ -15,8 +15,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	let enrage = 0;
 	let enrage_time = 0;
 	let counter = 0;
-	// let is_hp_79 = false;
-	let is_hp_49 = false;
+	let is_hp_79 = false;
+	// let is_hp_49 = false;
 	let mech_total = 0;
 	let mech_counter = 0;
 
@@ -50,8 +50,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 			handlers.text({
 				sub_type: "message",
-				message: is_one_back ? "Back!" : "!!!",
-				message_RU: is_one_back ? "Задняя!" : "!!!"
+				message: is_one_back ? "Back!" : "Triple Strikes | Split Strikes",
+				message_RU: is_one_back ? "Задняя!" : "Три удара | Откиды"
 			});
 		}
 
@@ -97,7 +97,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	function boss_mech_eventP2(skillid) {
 		enrage = new Date() - enrage_time >= 35100 ? 0 : 1;
-		mech_total = triple_attack ? (is_hp_49 ? 4 : 3) : 2; // is_hp_79
+		mech_total = triple_attack ? (is_hp_79 ? 4 : 3) : 2; // is_hp_79
 
 		if (mech_counter == 0) {
 			handlers.text({ sub_type: "message",
@@ -186,9 +186,13 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"re-3036-1000": [
 			{ type: "func", func: () => enrage = 0 }
 		],
-		"h-3036-1000-100": [{ type: "func", func: () => is_hp_49 = false }],
+		"h-3036-1000-100": [
+			// { type: "func", func: () => is_hp_49 = false },
+			{ type: "func", func: () => is_hp_79 = false }
+		],
 		"h-3036-1000-94": [{ type: "text", sub_type: "message", message: "94%" }],
-		"h-3036-1000-49": [{ type: "text", sub_type: "message", message: "49%" }, { type: "func", func: () => is_hp_49 = true }],
+		"h-3036-1000-79": [{ type: "text", sub_type: "message", message: "79%" }, { type: "func", func: () => is_hp_79 = true }],
+		// "h-3036-1000-49": [{ type: "text", sub_type: "message", message: "49%" }, { type: "func", func: () => is_hp_49 = true }],
 		"h-3036-1000-35": [{ type: "text", sub_type: "message", message: "Watch the countdown", message_RU: "Смотреть обратный отсчет" }],
 		"h-3036-1000-34": [{ type: "text", sub_type: "message", message: "Third layer of shrinking ring preparation", message_RU: "Третий этап подготовки кольца" }],
 		"h-3036-1000-65": [{ type: "text", sub_type: "message", message: "Second layer of shrinking ring preparation", message_RU: "Второй этап подготовки кольца" }],
@@ -206,7 +210,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "vector", args: [553, 270, 150, 0, 1300, 0, 5830] }
 		],
 		"s-3036-1000-1115-0": [
-			{ type: "text", sub_type: "message", message: "3" },
+			{ type: "text", sub_type: "message", message: "Take puddles away | 3", message_RU: "Отвести лужи | 3" },
 			{ type: "text", sub_type: "message", delay: 1000, message: "2" },
 			{ type: "text", sub_type: "message", delay: 2000, message: "1" },
 			{ type: "text", sub_type: "message", delay: 3200, message: "Dodge", message_RU: "Эвейд" }
@@ -259,8 +263,12 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3036-1000-2117-0": "s-3036-1000-1117-0",
 		"s-3036-1000-2118-0": "s-3036-1000-1118-0",
 		"qb-3036-1000-3036039": [
-			{ type: "text", sub_type: "message", delay: 75000, message: "Triple Soon", message_RU: "Скоро тройная" },
-			{ type: "text", sub_type: "notification", delay: 75000, message: "Triple Soon", message_RU: "Скоро тройная", speech: false },
+			{ type: "text", sub_type: "message", message: "Triple", message_RU: "Тройная", check_func: () => !is_hp_79 },
+			{ type: "text", sub_type: "message", message: "Quadruple", message_RU: "Четверная", check_func: () => is_hp_79 },
+			{ type: "text", sub_type: "message", delay: 75000, message: "Triple Soon", message_RU: "Скоро тройная", check_func: () => !is_hp_79 },
+			{ type: "text", sub_type: "message", delay: 75000, message: "Quadruple Soon", message_RU: "Скоро четверная", check_func: () => is_hp_79 },
+			{ type: "text", sub_type: "notification", delay: 75000, message: "Triple Soon", message_RU: "Скоро тройная", speech: false, check_func: () => !is_hp_79 },
+			{ type: "text", sub_type: "notification", delay: 75000, message: "Quadruple Soon", message_RU: "Скоро четверная", speech: false, check_func: () => is_hp_79 },
 			{ type: "func", func: boss_tripleattack_event }
 		],
 		"qb-3036-1000-3036040": [{ type: "func", func: boss_tripleattack_event }],

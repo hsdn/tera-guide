@@ -153,7 +153,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"ab-3920-3000-31083063-3": [{ type: "text", sub_type: "notification", message: "Stack 3", message_RU: "Стак 3" }],
 		"ab-3920-3000-31083064": [
 			{ type: "text", sub_type: "notification", message: "Charged", message_RU: "Заряжен", speech: false },
-			{ type: "text", sub_type: "alert", message: "Pushback soon", message_RU: "Скоро откид" }
+			{ type: "text", sub_type: "alert", message: "Pushback", message_RU: "Откид" }
 		],
 
 		// Cage mech
