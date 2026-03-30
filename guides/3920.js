@@ -5,21 +5,23 @@
 const util = require("util");
 
 module.exports = (dispatch, handlers, guide, lang) => {
-	let two_slash_time = 0;
+	let thirdboss_counter = 0;
+	let thirdboss_timer = null;
 	// let blue_sword = false;
 	let stack_red = 0;
 	let stack_blue = 0;
 	let stack_yellow = 0;
 	let buff_merciless = false;
 
-	function two_slash_event() {
-		const now_time = new Date();
+	function thirdboss_backattack_event() {
+		dispatch.clearTimeout(thirdboss_timer);
+		thirdboss_counter++;
 
-		if ((now_time - two_slash_time) > 1800 && (now_time - two_slash_time) < 2250) {
-			handlers.text({ sub_type: "message", message: "Back Stun", message_RU: "Задняя" });
+		if (thirdboss_counter >= 2) {
+			handlers.text({ sub_type: "message", message: "Back Stun/Front Stun", message_RU: "Задний/Передний" });
 		}
 
-		two_slash_time = now_time;
+		thirdboss_timer = dispatch.setTimeout(() => thirdboss_counter = 0, 2500);
 	}
 
 	function cage_colour_event() {
@@ -78,11 +80,15 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3920-3000-313-0": "s-3920-3000-310-0",
 		"s-3920-3000-314-0": "s-3920-3000-310-0",
 		"s-3920-3000-315-0": [{ type: "text", sub_type: "message", message: "Pushback (Kaia)", message_RU: "Откид (кайа)" }],
+
+		"am-3920-3012-31083058": [{ type: "text", sub_type: "message", message: "Red", message_RU: "Красная сфера" }],
+		"am-3920-3012-31083057": [{ type: "text", sub_type: "message", message: "Blue", message_RU: "Синяя сфера" }],
+
 		"s-3920-3000-400-0": [{ type: "text", sub_type: "message", message: "Clones: Beam", message_RU: "Копии: волны" }],
 		"s-3920-3000-401-0": [{ type: "text", sub_type: "message", message: "Clones: Spin", message_RU: "Копии: круговые" }],
 
 		// Back stun mech
-		"s-3920-3000-104-0": [{ type: "func", func: two_slash_event }],
+		"s-3920-3000-104-0": [{ type: "func", func: thirdboss_backattack_event }],
 		"s-3920-3000-119-0": [
 			{ type: "spawn", func: "circle", args: [true, 553, 0, -325, 12, 325, 0, 2000] },
 			{ type: "text", sub_type: "message", message: "Spin soon", message_RU: "Скоро круговая", check_func: () => buff_merciless, delay: 500 }
