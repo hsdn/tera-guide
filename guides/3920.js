@@ -81,7 +81,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3920-3000-314-0": "s-3920-3000-310-0",
 		"s-3920-3000-315-0": [{ type: "text", sub_type: "message", message: "Pushback (Kaia)", message_RU: "Откид (кайа)" }],
 
-		"am-3920-3012-31083058": [{ type: "text", sub_type: "message", message: "Red", message_RU: "Красная сфера" }],
+		"am-3920-3013-31083058": [{ type: "text", sub_type: "message", message: "Red", message_RU: "Красная сфера" }],
 		"am-3920-3012-31083057": [{ type: "text", sub_type: "message", message: "Blue", message_RU: "Синяя сфера" }],
 
 		"s-3920-3000-400-0": [{ type: "text", sub_type: "message", message: "Clones: Beam", message_RU: "Копии: волны" }],
