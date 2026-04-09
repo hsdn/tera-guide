@@ -82,6 +82,7 @@ id | Dungeon name | Название данжа
 3034 | Rampaging RK-9 Kennel | Ангар RK-9 (сложно)
 3036 | Sky Cruiser (Hard) | Небесный крейсер (сложно)
 3037 | Bahaar's Sanctum (Guide) | [Тренировка] Святилище Бахаара
+3047 | Hall of the Argon Queen (Hard) | Обитель Шандры Манайи (сложно)
 3101 | Gossamer Vault | Гнездо Паркин
 3102 | Draakon Arena | Командный центр
 3103 | Forbidden Arena [Undying Warlord] | [Этерния] Арена безумия
@@ -89,6 +90,7 @@ id | Dungeon name | Название данжа
 3105 | Fusion Laboratory | Лаборатория Слияния
 3106 | Killing Grounds | Место казни
 3107 | Corrupted RK-9 Kennel | Разрушенный Ангар РК-9
+3109 | Ice Throne | Ледяной трон
 3111 | The Veil (Darkan) | The Veil (Darkan)
 3123 | Akalath Quarantine (Hard) | Akalath Quarantine (Hard)
 3126 | Corrupted Skynest (Hard) | Логово Бессмертного Келсаика
@@ -98,6 +100,7 @@ id | Dungeon name | Название данжа
 3204 | Catalepticon (Hard) | Сонный паралич Лукмии (сложно)
 3205 | Cursed Fusion Laboratory | Заколдованная лаборатория слияния
 3206 | Crimson Killing Grounds | Окровавленное место казни
+3209 | Chaos Ice Throne | Ледяной трон Хаоса
 3920 | Cursed Antaroth's Abyss (Asura) | Искаженный Омут (Asura)
 7011 | Shadow of the Gutrends (Guardian) | Живодеры и черная тень (хранитель)
 7015 | Escape from Balder's Refuge (Guardian) | Операция "Спасти Убежище Балдера" (хранитель)
