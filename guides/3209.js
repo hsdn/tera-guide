@@ -22,12 +22,13 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "despawn_all" }
 		],
 		"s-3209-1000-1301-0": [
-			{ type: "text", sub_type: "message", message: "In > Out", message_RU: "К нему > От него" },
+			{ type: "text", sub_type: "message", message: "Out > In", message_RU: "От него > К нему" },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 50, 12, 250, 0, 4500] }
 		],
+		"s-3209-1000-1303-0": [{ type: "text", sub_type: "message", message: "Give stun!", message_RU: "Дать стан!" }],
 		"s-3209-1000-1305-0": [{ type: "text", sub_type: "message", message: "Puddles on lizards", message_RU: "Лужи на ящериц" }],
 		"s-3209-1000-1306-0": [
-			{ type: "text", sub_type: "message", message: "Out > In", message_RU: "От него > К нему" },
+			{ type: "text", sub_type: "message", message: "In > Out", message_RU: "К нему > От него" },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 50, 12, 250, 0, 4500] }
 		],
 
@@ -36,7 +37,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
-		"h-3209-2000-20": [{ type: "text", sub_type: "message", message: "20%" }],
 		"h-3209-2000-50": [{ type: "text", sub_type: "message", message: "50%" }],
 		//
 		"s-3209-2000-1403-0": [
@@ -54,9 +54,12 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3209-2000-1406-0": [{ type: "text", sub_type: "message", message: "Back Stun", message_RU: "Стан назад", delay: 1000 }],
 		"s-3209-2000-2406-0": "s-3209-2000-1406-0",
 		"s-3209-2000-1409-0": [
-			{ type: "text", sub_type: "message", message: "Back Slam", message_RU: "Удар назад", delay: 3000 },
-			{ type: "spawn", func: "circle", args: [false, 553, 157, 400, 12, 225, 0, 2000], delay: 3000 },
-			{ type: "spawn", func: "circle", args: [false, 553, 203, 400, 12, 225, 0, 2000], delay: 3000 }
+			{ type: "text", sub_type: "message", message: "Front Knockup!", message_RU: "Подкид вперёд" },
+			{ type: "spawn", func: "vector", args: [553, 0, -10, 90, 400, 0, 3500] },
+			{ type: "spawn", func: "vector", args: [553, 0, -10, 270, 400, 0, 3500] },
+			{ type: "text", sub_type: "message", message: "Back Slam", message_RU: "Удар назад", delay: 2000 },
+			{ type: "spawn", func: "circle", args: [false, 553, 157, 400, 12, 225, 0, 3000], delay: 2000 },
+			{ type: "spawn", func: "circle", args: [false, 553, 203, 400, 12, 225, 0, 3000], delay: 2000 }
 		],
 		"s-3209-2000-2409-0": "s-3209-2000-1409-0",
 		"s-3209-2000-1410-0": [
@@ -82,22 +85,23 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", message: "In | Pizza", message_RU: "К нему | Пицца", delay: 2500 },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 440, 0, 3000] },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 420, 0, 6500] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 7.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 30, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 52.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 45, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 75, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 97.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 90, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 120, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 142.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 135, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 165, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 187.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 210, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 232.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 225, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 255, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 277.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 270, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 300, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 322.5, 420, 0, 6500] },
-			{ type: "spawn", func: "marker", args: [false, 345, 200, 0, 5500, false] }
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 315, 420, 0, 6500] },
+			{ type: "spawn", func: "marker", args: [false, 345, 200, 0, 5500, false] },
+			{ type: "text", sub_type: "message", message: "Soon Pizza", message_RU: "Скоро пицца", delay: 50000 }
 		],
 		"s-3209-2000-2416-0": "s-3209-2000-1416-0",
 		"s-3209-2000-1417-0": [
@@ -105,22 +109,23 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", message: "Out | Pizza", message_RU: "От него | Пицца", delay: 2500 },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 440, 0, 6500] },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 420, 0, 3000] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 7.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 30, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 52.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 45, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 75, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 97.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 90, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 120, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 142.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 135, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 165, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 187.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 210, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 232.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 225, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 255, 200, 0, 1500, false], delay: 5500 },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 277.5, 420, 0, 6500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 270, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 300, 200, 0, 5500, false] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 322.5, 420, 0, 6500] },
-			{ type: "spawn", func: "marker", args: [false, 345, 200, 0, 1500, false], delay: 5500 }
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 315, 420, 0, 6500] },
+			{ type: "spawn", func: "marker", args: [false, 345, 200, 0, 1500, false], delay: 5500 },
+			{ type: "text", sub_type: "message", message: "Soon Pizza", message_RU: "Скоро пицца", delay: 50000 }
 		],
 		"s-3209-2000-2417-0": "s-3209-2000-1417-0",
 		// Dig
@@ -176,7 +181,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-3209-2000-2617-0": "s-3209-2000-1617-0",
 		//
-		"qb-3209-2000-32092011": [{ type: "text", sub_type: "message", message: "Debuff", message_RU: "Дебаф" }],
+		"qb-3209-2000-32092011": [
+			{ type: "text", sub_type: "message", message: "Debuff", message_RU: "Дебаф" },
+			{ type: "text", sub_type: "message", message: "Soon digging", message_RU: "Скоро подкоп", delay: 80000 }
+		],
 		// Dakuryon
 		"s-3209-2750-1301-0": [
 			{ type: "text", sub_type: "message", message: "Dakuryon", message_RU: "Дурион" },
