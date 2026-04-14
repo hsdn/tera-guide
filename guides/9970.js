@@ -16,7 +16,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
-		"die": [{ type: "func", func: () => { firstboss_debuff = null; } }],
+		"die": [{ type: "func", func: () => firstboss_debuff = null }],
 		"ae-0-0-97000042": [{ type: "func", func: () => firstboss_debuff = 1 }], // AoE (red)
 		"ae-0-0-97000043": [{ type: "func", func: () => firstboss_debuff = 2 }], // AoE (blue)
 		"am-970-1000-97000042": [{ type: "func", func: () => firstboss_debuff = 1 }], // Red
@@ -77,6 +77,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"h-970-3000-30": [{ type: "text", sub_type: "message", message: "30%", message_RU: "30%" }],
 		"am-970-3000-97000052": [{ type: "func", func: () => thirdboss_skull_debuff = true }],
 		"ar-970-3000-97000052": [{ type: "func", func: () => thirdboss_skull_debuff = false }],
+		"am-970-3000-97000038": [{ type: "func", func: () => thirdboss_skull_debuff = false }],
 		"s-970-3000-1102-0": [
 			{ type: "text", sub_type: "message", message: "Left Hand", message_RU: "Левая рука" },
 			{ type: "func", func: () => thirdboss_left_hand = true },
@@ -146,6 +147,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", message: "Dodge!", message_RU: "Циркуль" },
 			{ type: "text", sub_type: "message", message_RU: "От него", message: "Out", delay: 1000 },
 			{ type: "text", sub_type: "message", message_RU: "К нему", message: "In", delay: 2000 },
+			{ type: "text", sub_type: "message", message: "Plague/Regress", message_RU: "Чума/Регресс", class_position: "heal", delay: 3300 },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 14, 230, 0, 5000] },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 12, 430, 0, 5000] },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 630, 0, 5000] }
