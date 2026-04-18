@@ -9,10 +9,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	function cage_event() {
 		const entity = {};
-		entity.loc = new Vec3(4907, 164061, 4244);
+		entity.loc = new Vec3(4842, 164045, 4244);
 		entity.loc.w = 1.2419491953919122;
 
-		handlers.spawn({ func: "circle", args: [false, 553, 0, 0, 8, 650, 0, 15000], tag: "pre-cage" }, entity);
+		handlers.spawn({ func: "circle", args: [false, 553, 0, 0, 8, 621, 0, 15000], tag: "pre-cage" }, entity);
 	}
 
 	return {
@@ -21,6 +21,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
+		"s-3109-1000-1112-0": [{ type: "text", sub_type: "message", message: "Pushback (Kaia)", message_RU: "Откид (кайа)" }],
+		"s-3109-1000-2112-0": "s-3109-1000-1112-0",
+		"s-3109-1000-1103-0": [{ type: "text", sub_type: "message", message: "Two pushback (Kaia)", message_RU: "Два откида (кайа)" }],
+		"s-3109-1000-2103-0": "s-3109-1000-1103-0",
 		"s-3109-1000-1301-0": [
 			{ type: "text", sub_type: "message", message: "Out > In", message_RU: "От него > К нему" },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 50, 12, 250, 0, 4500] }
@@ -44,12 +48,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "circle", args: [false, 553, 203, 400, 8, 350, 0, 2500], delay: 2500 }
 		],
 		"s-3109-2000-2403-0": "s-3109-2000-1403-0",
-		"s-3109-2000-1405-0": [
-			{ type: "text", sub_type: "message", message: "Front Sweep | Back Slam", message_RU: "Передняя | Удар назад" },
-			{ type: "spawn", func: "circle", args: [false, 553, 157, 400, 8, 350, 0, 2000], delay: 1500 },
-			{ type: "spawn", func: "circle", args: [false, 553, 203, 400, 8, 350, 0, 2000], delay: 1500 }
-		],
-		"s-3109-2000-2405-0": "s-3109-2000-1405-0",
+		"s-3109-2000-1404-0": [{ type: "text", sub_type: "message", message: "Front Stun", message_RU: "Стан вперёд", delay: 1000 }],
+		"s-3109-2000-2404-0": "s-3109-2000-1404-0",
 		"s-3109-2000-1406-0": [{ type: "text", sub_type: "message", message: "Back Stun", message_RU: "Стан назад", delay: 1000 }],
 		"s-3109-2000-2406-0": "s-3109-2000-1406-0",
 		"s-3109-2000-1409-0": [
@@ -100,7 +100,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "marker", args: [false, 300, 200, 0, 1500, false], delay: 5500 },
 			{ type: "spawn", func: "vector", args: [553, 0, 0, 315, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 345, 200, 0, 5500, false] },
-			{ type: "text", sub_type: "message", message: "Soon Pizza", message_RU: "Скоро пицца", delay: 50000 }
+			{ type: "text", sub_type: "notification", message: "Soon Pizza", message_RU: "Скоро пицца", delay: 50000 }
 		],
 		"s-3109-2000-2416-0": "s-3109-2000-1416-0",
 		"s-3109-2000-1417-0": [
@@ -124,7 +124,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "marker", args: [false, 300, 200, 0, 5500, false] },
 			{ type: "spawn", func: "vector", args: [553, 0, 0, 315, 420, 0, 6500] },
 			{ type: "spawn", func: "marker", args: [false, 345, 200, 0, 1500, false], delay: 5500 },
-			{ type: "text", sub_type: "message", message: "Soon Pizza", message_RU: "Скоро пицца", delay: 50000 }
+			{ type: "text", sub_type: "notification", message: "Soon Pizza", message_RU: "Скоро пицца", delay: 50000 }
 		],
 		"s-3109-2000-2417-0": "s-3109-2000-1417-0",
 		// Dig
@@ -182,7 +182,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		//
 		"qb-3109-2000-32092011": [
 			{ type: "text", sub_type: "message", message: "Debuff", message_RU: "Дебаф" },
-			{ type: "text", sub_type: "message", message: "Soon digging", message_RU: "Скоро подкоп", delay: 80000 }
+			{ type: "text", sub_type: "notification", message: "Soon digging", message_RU: "Скоро подкоп", delay: 80000 },
+			{ type: "text", sub_type: "message", message: "Line up in order between the stones", message_RU: "Выстроится по порядку между камнями", delay: 87000 }
 		]
 	};
 };
