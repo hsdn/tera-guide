@@ -15,6 +15,53 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		handlers.spawn({ func: "circle", args: [false, 553, 0, 0, 8, 621, 0, 15000], tag: "pre-cage" }, entity);
 	}
 
+	const { player } = dispatch.require.library;
+	let has_debuff_player = false;
+
+	dispatch.hook("S_ABNORMALITY_BEGIN", dispatch._mod.majorPatchVersion >= 107 ? 5 : 4, event => {
+		if (event.id === 32092053) {
+			if (dispatch._mod.game.me.is(event.target)) {
+				handlers.text({ sub_type: "notification", message: "Icicles on you", message_RU: "Сосульки на тебе" });
+			} else {
+				const member = player.playersInParty.get(event.target);
+				if (member) {
+					handlers.text({
+						sub_type: "message",
+						message: `Icicles on ${member.name}`,
+						message_RU: `Сосульки на ${member.name}`
+					});
+				} else {
+					handlers.text({ sub_type: "message", message: "Icicles", message_RU: "Сосульки" });
+				}
+			}
+		} else if (event.id === 32092004 && !has_debuff_player) {
+			has_debuff_player = true;
+
+			if (dispatch._mod.game.me.is(event.target)) {
+				handlers.text({ sub_type: "notification", message: "Debuff on you", message_RU: "Дебаф на тебе" });
+			} else {
+				const member = player.playersInParty.get(event.target);
+				if (member) {
+					handlers.text({
+						sub_type: "message",
+						message: `Stay with ${member.name}`,
+						message_RU: `Встать к ${member.name}`
+					});
+				} else {
+					handlers.text({ sub_type: "message", message: "Inward Wave (Gather)", message_RU: "Волна (вместе)" });
+				}
+			}
+		} else if (event.id === 32092005 && has_debuff_player) {
+			has_debuff_player = false;
+		}
+	});
+
+	dispatch.hook("S_ABNORMALITY_END", 1, event => {
+		if (event.id === 32092004) {
+			has_debuff_player = false;
+		}
+	});
+
 	return {
 		// 1 BOSS
 		"nd-3209-1000": [
@@ -41,7 +88,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
-		"h-3209-2000-50": [{ type: "text", sub_type: "message", message: "50%" }],
+		"h-3209-2000-50": [{ type: "text", sub_type: "notification", message: "50%" }],
 		//
 		"s-3209-2000-1403-0": [
 			{ type: "text", sub_type: "message", message: "Back Slam", message_RU: "Удар назад", delay: 2500 },
@@ -51,6 +98,12 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3209-2000-2403-0": "s-3209-2000-1403-0",
 		"s-3209-2000-1404-0": [{ type: "text", sub_type: "message", message: "Front Stun", message_RU: "Стан вперёд", delay: 1000 }],
 		"s-3209-2000-2404-0": "s-3209-2000-1404-0",
+		"s-3209-2000-1405-0": [
+			{ type: "text", sub_type: "message", message: "Back Slam", message_RU: "Удар назад", delay: 1500 },
+			{ type: "spawn", func: "circle", args: [false, 553, 157, 400, 8, 350, 0, 1500], delay: 1500 },
+			{ type: "spawn", func: "circle", args: [false, 553, 203, 400, 8, 350, 0, 1500], delay: 1500 }
+		],
+		"s-3209-2000-2405-0": "s-3209-2000-1405-0",
 		"s-3209-2000-1406-0": [{ type: "text", sub_type: "message", message: "Back Stun", message_RU: "Стан назад", delay: 1000 }],
 		"s-3209-2000-2406-0": "s-3209-2000-1406-0",
 		"s-3209-2000-1409-0": [
@@ -133,6 +186,10 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3209-2000-2510-0": "s-3209-2000-1510-0",
 		"s-3209-2000-1511-0": [{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 12, 400, 0, 2500] }],
 		"s-3209-2000-2511-0": "s-3209-2000-1511-0",
+		"s-3209-2000-1601-0": [
+			{ type: "text", sub_type: "message", message: "Icicles", message_RU: "Сосульки" },
+			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 1325, 0, 4300] }
+		],
 		"s-3209-2000-1602-0": [
 			{ type: "text", sub_type: "message", message: "Get Out", message_RU: "Наружу" },
 			{ type: "func", func: cage_event }
@@ -168,8 +225,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-3209-2000-2605-0": "s-3209-2000-1605-0",
 		// Waves
-		"s-3209-2000-1616-0": [{ type: "text", sub_type: "message", message: "Inward Wave (Gather)", message_RU: "Волна (вместе)" }],
-		"s-3209-2000-2616-0": "s-3209-2000-1616-0",
 		"ae-0-0-32092005": [{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд" }],
 		"s-3209-2000-1617-0": [
 			{ type: "text", sub_type: "message", message: "Front | Back Waves", message_RU: "Передняя | Волны" },
