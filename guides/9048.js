@@ -1,4 +1,4 @@
-﻿// Sanctum of the Fire God
+// Sanctum of the Fire God 2.0
 //
 // made by michengs / Emilia-s2 / HSDN / Vampic / NoobLevelUP
 
@@ -8,6 +8,28 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	const { player } = dispatch.require.library;
 	let print_loading = true;
 	let print_lasers = true;
+	let is_enraged = false;
+	let enrage_timer = null;
+
+	dispatch.hook("S_NPC_STATUS", 2, event => {
+		if (event.gameId === handlers.npcId) {
+			if (enrage_timer) {
+				clearTimeout(enrage_timer);
+				enrage_timer = null;
+			}
+
+			if (event.enraged) {
+				is_enraged = true;
+
+				enrage_timer = setTimeout(() => {
+					is_enraged = false;
+				}, 34450);
+
+			} else {
+				is_enraged = false;
+			}
+		}
+	});
 
 	function waves_event() {
 		handlers.event([
@@ -37,7 +59,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}
 	});
 
-	// New Laser
+	// เลเซอร์ 2 (1.0)
 	dispatch.hook("S_ABNORMALITY_BEGIN", dispatch._mod.majorPatchVersion >= 107 ? 5 : 4, event => {
 		if (event.id === 90442503) {
 			if (dispatch._mod.game.me.is(event.target)) {
@@ -55,12 +77,56 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}
 	});
 
+	let next_debuff = 0; //ดีบัฟ 2.0
+	function debuff_event(send_msg, debuff, ent) {
+		if (next_debuff === 0) {
+			next_debuff = debuff;
+		}
+
+		if (send_msg) {
+			const debuff_messages = {
+				0: { message: "Debuff", message_RU: "Дебаф (бублик)" },
+				1: { message: "Debuff 1", message_RU: "Дебаф (бублик) 1" },
+				2: { message: "Debuff 2", message_RU: "Дебаф (бублик) 2" },
+				3: { message: "Debuff 3", message_RU: "Дебаф (бублик) 3" }
+			};
+
+			handlers.text({
+				sub_type: "notification",
+				message: debuff_messages[next_debuff].message,
+				message_RU: debuff_messages[next_debuff].message_RU,
+				speech: true
+			});
+
+			if (next_debuff !== 0) {
+				next_debuff++;
+			}
+
+			if (next_debuff > 3) {
+				next_debuff = 1;
+			}
+		}
+	}
+
+	function debuff_removed() {
+		if (next_debuff != 0) {
+			handlers.text({
+				sub_type: "notification",
+				message: `next debuff: ${next_debuff}`,
+				message_RU: `Следующий Дебаф (бублик): ${next_debuff}`,
+				speech: false
+			});
+		}
+
+		next_debuff = 0;
+	}
+
 	return {
-		// PHASE 2
 		"nd-448-2000": [
 			{ type: "stop_timers" },
 			{ type: "despawn_all" }
 		],
+		"h-448-2000-10": [{ type: "text", sub_type: "notification", message: "10% Last Wrath [c=#00EAFF]Kaia Save[/c]" }],
 		"ns-448-2000": [
 			{ type: "spawn", func: "marker", args: [false, 0, -700, 100, 60000000, false, ["Throne", "Throne Direction"]] },
 			{ type: "spawn", func: "point", args: [513, 0, 800, 100, 60000000] },
@@ -79,17 +145,55 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-448-2000-1107-0": [{ type: "text", sub_type: "message", message: "4 Hit (3)", message_RU: "4" }],
 
-		"s-448-2000-3202-0": [ // After 4 Hit Donuts Enraged
-			{ type: "text", sub_type: "message", message: "IN - OUT ", message_RU: "От него > К нему" },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 300, 0, 4000] },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 575, 0, 4000] }
+		// บอสโกรธ (โดนัท)
+		"s-448-2000-3202-0": [
+
+			{
+				type: "text",
+				sub_type: "message",
+				message: "IN > OUT",
+				check_func: () => is_enraged === true
+			},
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 300, 0, 4000], check_func: () => is_enraged === true },
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 575, 0, 4000], check_func: () => is_enraged === true },
+
+			//  ป้าย 4 ด้าน
+			{ type: "spawn", func: "marker", args: [false, 0, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === true },
+			{ type: "spawn", func: "marker", args: [false, 90, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === true },
+			{ type: "spawn", func: "marker", args: [false, 180, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === true },
+			{ type: "spawn", func: "marker", args: [false, 270, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === true },
+
+			{
+				type: "text",
+				sub_type: "message",
+				message: "OUT > IN",
+				check_func: () => is_enraged === false
+			},
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 300, 0, 4000], check_func: () => is_enraged === false },
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 575, 0, 4000], check_func: () => is_enraged === false },
+
+			// ป้าย 4 ด้าน
+			{ type: "spawn", func: "marker", args: [false, 0, 200, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === false },
+			{ type: "spawn", func: "marker", args: [false, 90, 200, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === false },
+			{ type: "spawn", func: "marker", args: [false, 180, 200, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === false },
+			{ type: "spawn", func: "marker", args: [false, 270, 200, 0, 4000, true, ["Safe", "ปลอดภัย"]], check_func: () => is_enraged === false }
 		],
 
-		"s-448-2000-3102-0": [ // After 4 Hit Donuts Non-Rnraged
-			{ type: "text", sub_type: "message", message: "IN - OUT ", message_RU: "От него > К нему" },
+		// บอสไม่โกรธ (โดนัทปกติ)
+		"s-448-2000-3102-0": [
+			{ type: "text", sub_type: "message", message: "OUT > IN" },
 			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 300, 0, 4000] },
-			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 575, 0, 4000] }
+			{ type: "spawn", func: "circle", args: [false, 445, 0, 0, 12, 575, 0, 4000] },
+
+			// ป้าย 4 ด้าน
+			{ type: "spawn", func: "marker", args: [false, 0, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]] },
+			{ type: "spawn", func: "marker", args: [false, 90, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]] },
+			{ type: "spawn", func: "marker", args: [false, 180, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]] },
+			{ type: "spawn", func: "marker", args: [false, 270, 430, 0, 4000, true, ["Safe", "ปลอดภัย"]] }
 		],
+
+		"s-448-2000-3402-0": [{ type: "func", func: debuff_event, args: [true, 0] }], //new manaya mech
+		"s-448-2000-3401-0": "s-448-2000-3402-0",
 
 		"s-448-2000-1108-0": [
 			{ type: "text", sub_type: "message", message: "Back Throw", message_RU: "Стан назад" },
@@ -129,6 +233,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 2000] },
 			{ type: "spawn", func: "marker", args: [false, 270, 300, 100, 2000, true, null] }
 		],
+
 		"s-448-2000-1120-0": [
 			{ type: "text", sub_type: "message", message: "Right Swipe", message_RU: "Справа" },
 			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 2000] },
@@ -137,6 +242,20 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2000] },
 			{ type: "spawn", func: "marker", args: [false, 90, 300, 100, 2000, true, null] }
 		],
+		// 2.0
+		"s-448-2000-3313-0": "s-448-2000-1119-0",
+		"s-448-2000-3314-0": "s-448-2000-1120-0",
+		"s-448-2000-3303-0": "s-448-2000-1119-0",
+		"s-448-2000-3304-0": "s-448-2000-1120-0",
+
+		"s-448-2000-3301-0": [ // 2.0
+			{ type: "text", sub_type: "message", message: "Wrath (Double Swipe)"/*, message_RU: "Облепиха (кайа)"*/ },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 6000] },
+			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 6000] }
+		],
+
+		"s-448-2000-3302-0": "s-448-2000-3301-0",
+
 		"s-448-2000-1121-0": [
 			{ type: "text", sub_type: "message", message: "Waves (Left)", message_RU: "Волны (левая)" },
 			{ type: "func", func: waves_event },
@@ -183,7 +302,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "circle", args: [false, 553, 185, 500, 8, 490, 100, 2000] }
 		],
 		"s-448-2000-1138-0": [{ type: "text", sub_type: "message", delay: 900, message: "Dodge", message_RU: "Эвейд" }], // Knockup (Bait)
-		"s-448-2000-1139-0": [{ type: "text", sub_type: "message", delay: 200, message: "Dodge!", message_RU: "Эвейд!" }],
+		"s-448-2000-1139-0": [{ type: "text", sub_type: "notification", delay: 0, message: "Stun Boss", message_RU: "Эвейд!" }],
 		"s-448-2000-1140-0": [
 			{ type: "text", sub_type: "message", message: "Waves (Right)", message_RU: "Волны (правая)" },
 			{ type: "func", func: waves_event },
@@ -219,6 +338,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "vector", args: [553, 0, 0, 0, 500, 0, 6000] },
 			{ type: "spawn", func: "vector", args: [553, 0, 0, 180, 500, 0, 6000] }
 		],
+
 		// Enraged
 		"s-448-2000-2101-0": "s-448-2000-1101-0",
 		"s-448-2000-2103-0": "s-448-2000-1103-0",
@@ -251,7 +371,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "circle", args: [false, 553, 356, 220, 12, 210, 100, 4000] }
 		],
 		"s-448-2000-2137-0": "s-448-2000-1137-0",
-		"s-448-2000-2138-0": [{ type: "text", sub_type: "message", message: "Dodge", message_RU: "Эвейд" }], // Knockup (Bait)
+		"s-448-2000-2138-0": [{ type: "text", sub_type: "message", message: "Stun"/*, message_RU: "Эвейд"*/ }], // Knockup (Bait)
 		"s-448-2000-2139-0": "s-448-2000-1139-0",
 		"s-448-2000-2140-0": "s-448-2000-1140-0",
 		"s-448-2000-2141-0": "s-448-2000-1141-0",
@@ -290,7 +410,19 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"ab-448-2000-90442303": [{ type: "text", sub_type: "message", message: "Plague/Regress", message_RU: "Регресс" }],
 		"ab-448-2000-90442304": [
 			{ type: "text", sub_type: "notification", message: "Stun", message_RU: "Стан!", speech: false },
-			{ type: "text", sub_type: "message", message: "Stun", message_RU: "Стан!" }
-		]
+			{ type: "text", sub_type: "notification", message: "Stun", message_RU: "Стан!" }
+		],
+
+		//new 2.0
+		"ab-448-2000-4480009": [{ type: "text", sub_type: "notification", message: "[c=#D95FD2]Plague/Regress[/c]", message_RU: "Регресс" }],
+		"ab-448-2000-4480003": [
+			{ type: "text", sub_type: "notification", message: "[c=#1EE3DF]Break Shield[/c]" }
+		],
+
+		"die": [{ type: "func", func: debuff_removed }],
+		"h-448-2000-99": [{ type: "func", func: () => next_debuff = 0 }],
+		"am-448-2000-47702900": [{ type: "func", func: debuff_event, args: [false, 2] }], // 1
+		"am-448-2000-47703000": [{ type: "func", func: debuff_event, args: [false, 3] }], // 2
+		"am-448-2000-47703100": [{ type: "func", func: debuff_event, args: [false, 1] }] // 3
 	};
 };
