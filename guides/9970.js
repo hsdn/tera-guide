@@ -5,10 +5,38 @@
 module.exports = (dispatch, handlers, guide, lang) => {
 	guide.type = SP;
 
+	const { player } = dispatch.require.library;
+
 	let firstboss_debuff = null;
 	let thirdboss_skull_debuff = false;
 	let thirdboss_left_hand = false;
 	let thirdboss_h50 = false;
+
+	dispatch.hook("S_ABNORMALITY_BEGIN", dispatch._mod.majorPatchVersion >= 107 ? 5 : 4, event => {
+		if (event.id === 97000001) {
+			if (dispatch._mod.game.me.is(event.target)) {
+				handlers.text({ sub_type: "notification", message: "Lead the spider to the cocoon", message_RU: "Отвести паука к кокону" });
+				handlers.text({ sub_type: "alert", message: "Lead the spider to the cocoon", message_RU: "Отвести паука к кокону" });
+			} else {
+				const member = player.playersInParty.get(event.target);
+				if (member) {
+					handlers.text({
+						sub_type: "message",
+						message: `Spider on ${member.name}`,
+						message_RU: `Паук на ${member.name}`
+					});
+					handlers.text({
+						sub_type: "alert",
+						message: `Spider on ${member.name}`,
+						message_RU: `Паук на ${member.name}`
+					});
+				} else {
+					handlers.text({ sub_type: "message", message: "Spider", message_RU: "Паук" });
+					handlers.text({ sub_type: "alert", message: "Spider", message_RU: "Паук" });
+				}
+			}
+		}
+	});
 
 	return {
 		// 1 BOSS
