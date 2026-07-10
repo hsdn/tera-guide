@@ -12,6 +12,16 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	dispatch.hook("S_ACTION_STAGE", 9, event => {
 		if (event.templateId !== 1000 || event.skill.huntingZoneId !== 3047) return;
 
+		if ([3204, 4204].includes(event.skill.id)) {
+			dispatch.setTimeout(() => {
+				handlers.text({
+					sub_type: "message",
+					message: "Evades",
+					message_RU: "Эвейды"
+				});
+			}, (event.skill.id === 3204 ? 3000 : 2350) / event.speed);
+		}
+
 		if ([3118, 4118, 3123, 4123].includes(event.skill.id)) {
 			dispatch.setTimeout(() => {
 				handlers.text({
