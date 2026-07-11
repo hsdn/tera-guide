@@ -122,8 +122,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3109-2000-2410-0": "s-3109-2000-1410-0",
 		"s-3109-2000-1411-0": [
 			{ type: "text", sub_type: "message", message: "Back Knockup!", message_RU: "Подкид назад" },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 85, 550, 0, 3500] },
-			{ type: "spawn", func: "vector", args: [553, 0, 0, 270, 550, 0, 3500] }
+			{ type: "spawn", func: "vector", args: [553, 0, 75, 90, 400, 0, 3500] },
+			{ type: "spawn", func: "vector", args: [553, 0, 75, 270, 400, 0, 3500] }
 		],
 		"s-3109-2000-2411-0": "s-3109-2000-1411-0",
 		// In - Out
