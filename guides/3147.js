@@ -1,4 +1,4 @@
-﻿// Hall of the Argon Queen (Hard)
+﻿// Hall of the Argon Queen (Hard) (Asura)
 //
 // made icebrog / Vampic
 
@@ -158,15 +158,15 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-3147-1000-4123-0": "s-3147-1000-3123-0",
 
-		"am-3147-1000-30471004": [{ type: "func", func: () => curr_debuff_id = 1, check_func: () => curr_debuff_id === null }],
-		"am-3147-1000-30471005": [{ type: "func", func: () => curr_debuff_id = 2, check_func: () => curr_debuff_id === null }],
-		"am-3147-1000-30471006": [{ type: "func", func: () => curr_debuff_id = 3, check_func: () => curr_debuff_id === null }],
-		"am-3147-1000-30471007": [{ type: "func", func: () => curr_debuff_id = 4, check_func: () => curr_debuff_id === null }],
+		"am-3147-1000-31471004": [{ type: "func", func: () => curr_debuff_id = 1, check_func: () => curr_debuff_id === null }],
+		"am-3147-1000-31471005": [{ type: "func", func: () => curr_debuff_id = 2, check_func: () => curr_debuff_id === null }],
+		"am-3147-1000-31471006": [{ type: "func", func: () => curr_debuff_id = 3, check_func: () => curr_debuff_id === null }],
+		"am-3147-1000-31471007": [{ type: "func", func: () => curr_debuff_id = 4, check_func: () => curr_debuff_id === null }],
 
-		"am-3147-1000-30471008": [{ type: "func", func: debuff_event, args: [1] }],
-		"am-3147-1000-30471009": [{ type: "func", func: debuff_event, args: [2] }],
-		"am-3147-1000-30471010": [{ type: "func", func: debuff_event, args: [3] }],
-		"am-3147-1000-30471011": [{ type: "func", func: debuff_event, args: [4] }],
+		"am-3147-1000-310471008": [{ type: "func", func: debuff_event, args: [1] }],
+		"am-3147-1000-31471009": [{ type: "func", func: debuff_event, args: [2] }],
+		"am-3147-1000-31471010": [{ type: "func", func: debuff_event, args: [3] }],
+		"am-3147-1000-31471011": [{ type: "func", func: debuff_event, args: [4] }],
 
 		// Debuffs
 		"s-3147-1000-3319-0": [{ type: "func", func: debuff_event_with_offset, args: [1] }],
@@ -174,7 +174,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-3147-1000-3321-0": [{ type: "func", func: debuff_event_with_offset, args: [3] }],
 
 		// Plague/Regress
-		"ab-3147-1000-30470100-1": [{ type: "text", sub_type: "message", message: "Plague/Regress - Stack 1", message_RU: "Регресс - стак 1" }],
-		"ab-3147-1000-30470100-2": [{ type: "text", sub_type: "message", message: "Plague/Regress - Stack 2", message_RU: "Регресс - стак 2" }]
+		"ab-3147-1000-31470100-1": [{ type: "text", sub_type: "message", message: "Plague/Regress - Stack 1", message_RU: "Регресс - стак 1" }],
+		"ab-3147-1000-31470100-2": [{ type: "text", sub_type: "message", message: "Plague/Regress - Stack 2", message_RU: "Регресс - стак 2" }]
 	};
 };
