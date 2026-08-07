@@ -17,7 +17,7 @@
         "guides/3030.js": "e3180ff65a1ed4bf269b1164719d86cc44c3151e24b4e59b948abcbdd8384a84",
         "guides/3032.js": "336996a4a3fabeef4b6d90c77fb0b84a5f696fb9b019716bf1b37b04e37003ab",
         "guides/3034.js": "eff4e8f10579c0ff255ebbe327d6bbe2c565ddad7905d262e8e7c67cda76853d",
-        "guides/3036.js": "d726421bca10ce82ab6cb3680a1042fb3878592f5e63b9e45d881fd2d57e9baf",
+        "guides/3036.js": "12b79307a92b0b7f1bd3a97c68a5d91da5f0b1e2393d0f4e3a7fcb41d0daccfb",
         "guides/3037.js": "3f1d726379080a7a014eeec14e0c757d22ff8e4923fa6d395d6a8f2e52d23afa",
         "guides/3047.js": "a1596f58f68b31f04eb0040113d72e0c94f19249c5f3d1b033f9c69c2d9e2fd5",
         "guides/3101.js": "dd7442d3d9840448dc4d56a19b9bcf07a2ca8e15592b409dbdef241d3591580d",
@@ -31,6 +31,7 @@
         "guides/3111.js": "3ae07f197ce94ec237267cd7e762bb8bcf497308e722246a916ad8a1419554c8",
         "guides/3123.js": "d061aa0b3bf4115700c4763a73babaab0ea19a28c4661e07e92a5890f5498fc8",
         "guides/3126.js": "16717e0725fd0b9364ca5afa6bc077d9503b900d80abf88f72cd2db83d449cc1",
+        "guides/3147.js": "03ef993d6eb5796c2d257f2c1387ba61ee05512a25b15ed626f46a976c338658",
         "guides/3201.js": "7d32e08858a76a5ac4b3ba711bfd84b0fe27fd6488f44198d36f9f4a9fd4ceea",
         "guides/3202.js": "b30a66b3f95cbf712140b15e73e525535aae29bb519f8bc2fa19c20dd67f39c2",
         "guides/3203.js": "e48fe4b22ab154d5882bbc1ba2081c2ca4b29c1fc42d8fb1e1642238d30d6049",
@@ -88,7 +89,7 @@
         "index.js": "e96e5d5833e0c28967b3ac43f017af0e0c0a33ffa686f20c4398d86222eba491",
         "lang/dungeons.js": "4c4a16197bf9898e0a420c082c67457b007253db9a125cfe875e69c0fd0b16d9",
         "lang/strings.js": "33e95fa48d7a386620e561e696e52d7f72253bb1b2de749a99336110aaaade34",
-        "module.json": "e71f61db4703ead6bc2fa69d1f2f6dd4ecfa3a6436d607a7c890817f8017e6d8",
+        "module.json": "acc4f984d8b6a804892d00552b69392b8b02dd7b1d09517bf03433e42fbff9b7",
         "settings_migrator.js": "febf6c909b0bcfb5ce27c8336ddd6fb6fdf83d7f0549516e9cddc740f72b8ea6"
     }
 }
