@@ -83,7 +83,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 				for (const offset of pattern.offsets) {
 					handlers.event([{
 						"type": "spawn",
-						"id": 537,
+						"id": 106,
+						// "id": 537,
 						"delay": mechanic.delays[i] / ent.speed,
 						"sub_delay": 1466 / ent.speed,
 						"distance": pattern.distance,
@@ -340,8 +341,16 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	});
 
 	// 9th floor darkan
+	let secondary_aggro_date = 0;
 	let is_ninth_floor = false;
 	let ninth_floor_fifty = false;
+
+	dispatch.hook("S_USER_EFFECT", "*", e => {
+		if (!is_ninth_floor) return;
+		if (e.circle == 3 && e.operation == 1 && e.source == boss_data.gameId) {
+			secondary_aggro_date = new Date();
+		}
+	});
 
 	let back_print = false;
 	let back_time = 0;
@@ -381,6 +390,36 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			}
 		}
 		dispatch.setTimeout(() => back_print = false, 3500);
+	}
+
+	function ninth_secondary_swipe(ent) {
+		if (Date.now() - secondary_aggro_date > 1500 || !ninth_floor_fifty) return;
+
+		if (ent.skill.id % 1000 === 106) {
+			return handlers.event([
+				{ type: "text", sub_type: "message", message_RU: "Левый удар", message: "Left swipe" },
+				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2500] },
+				{ type: "spawn", func: "marker", args: [false, 60, 100, 0, 2000, true, null] },
+				{ type: "spawn", func: "marker", args: [false, 130, 100, 0, 2000, true, null] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2500] }
+			]);
+		}
+
+		if (ent.skill.id % 1000 === 103) {
+			return handlers.event([
+				{ type: "text", sub_type: "message", message_RU: "Правый удар", message: "Right swipe" },
+				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2500] },
+				{ type: "spawn", func: "marker", args: [false, 300, 100, 0, 2000, true, null] },
+				{ type: "spawn", func: "marker", args: [false, 230, 100, 0, 2000, true, null] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 2500] },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 2500] }
+			]);
+		}
 	}
 
 	function boss_backattack_event_new(curr, ent) {
@@ -524,8 +563,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		triples_timer = dispatch.setTimeout(() => {
 			handlers.text({
 				sub_type: "notification",
-				message: "Triples Soon!",
-				message_RU: "тройки Скоро!"
+				message: "Triple Soon",
+				message_RU: "Скоро тройная"
 			});
 		}, 100000);
 
@@ -542,7 +581,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 				handlers.text({
 					sub_type: "notification",
 					message: "Secondary Soon!",
-					message_RU: "вторичный скоро!"
+					message_RU: "Вторичный скоро!"
 				});
 			}
 		}, 45000);
@@ -558,6 +597,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		prev_date = 0;
 
 		// reset aggro event
+		secondary_aggro_date = 0;
 		is_ninth_floor = false;
 		ninth_floor_fifty = false;
 		ninth_floor_eighty = false;
@@ -982,13 +1022,13 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-434-7000-2155-0": "s-434-7000-1155-0",
 		"s-434-7000-7901-0": [ // normal world
-			{ type: "text", sub_type: "message", message: "Debuffs Closest", message_RU: "Дебафф (ближние)" },
-			{ type: "text", sub_type: "notification", message: "Debuffs Closest", message_RU: "Дебафф (ближние)" },
+			{ type: "text", sub_type: "message", message: "Debuffs Closest", message_RU: "Дебафф (ближний + дальний)" },
+			{ type: "text", sub_type: "notification", message: "Debuffs Closest", message_RU: "Дебафф (ближний + дальний)" },
 			{ type: "func", func: seventh_spawn_tables, args: [true] }
 		],
 		"s-434-7000-7902-0": [ // soul world
-			{ type: "text", sub_type: "message", message: "Debuffs Farthest", message_RU: "Дебафф (дальние)" },
-			{ type: "text", sub_type: "notification", message: "Debuffs Farthest", message_RU: "Дебафф (дальние)" },
+			{ type: "text", sub_type: "message", message: "Debuffs Farthest", message_RU: "Дебафф (дальний + ближний)" },
+			{ type: "text", sub_type: "notification", message: "Debuffs Farthest", message_RU: "Дебафф (дальний + ближний)" },
 			{ type: "func", func: seventh_spawn_tables, args: [false] }
 		],
 		"s-434-7000-7903-0": [ // normal world
@@ -1043,7 +1083,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"nd-434-8200": [{ type: "func", func: carpet_mob_reset_event }],
 		"qb-434-8000-459006": [{ type: "text", sub_type: "alert", message: "Red Circles", message_RU: "Красные круги" }],
 		"qb-434-8000-434801": [
-			{ type: "text", sub_type: "message", message: "Orbs", message_RU: "сферы" },
+			{ type: "text", sub_type: "message", message: "Orbs", message_RU: "Сферы" },
 			{ type: "text", sub_type: "message", delay: 10000, message: "Attention Orbs", message_RU: "Сферы внимания" }
 		],
 		"s-434-8200-3102-0": [{ type: "text", sub_type: "message", message: "Yellow Circles", message_RU: "Желтые круги" }],
@@ -1076,19 +1116,25 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"h-434-9000-49": [
 			{ type: "text", sub_type: "message", message: "49%" },
 			{ type: "func", func: () => ninth_floor_fifty = true },
-			{ type: "text", sub_type: "notification", message: "Triples Soon!", message_RU: "Скоро Трепла!", delay: 1000 }
+			{ type: "text", sub_type: "notification", message: "Triple Soon", message_RU: "Скоро тройная", delay: 1000 }
 		],
 		"dm-0-0-9034901": [
-			{ type: "text", sub_type: "message", message: "Triples!", message_RU: "Трепла!" },
+			{ type: "text", sub_type: "message", message: "Triple", message_RU: "Тройная" },
 			{ type: "func", func: () => ninth_triple_swipe_remaining = 3 },
 			{ type: "func", func: ninth_triples_event }
 		],
 		"s-434-9000-1112-0": [{ type: "text", sub_type: "message", message_RU: "Рывок назад", message: "Back Move" }],
 		"s-434-9000-1102-0": [{ type: "func", func: () => back_time = new Date() }],
 		"s-434-9000-1101-0": [{ type: "func", func: boss_backattack_event }],
-		"s-434-9000-1106-0": [{ type: "func", func: boss_backattack_event_new, args: [1106] }],
+		"s-434-9000-1106-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [1106] },
+			{ type: "func", func: ninth_secondary_swipe }
+		],
 		"s-434-9000-1105-0": [{ type: "func", func: boss_backattack_event_new, args: [1105] }],
-		"s-434-9000-1103-0": [{ type: "func", func: boss_backattack_event_new, args: [1103] }],
+		"s-434-9000-1103-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [1103] },
+			{ type: "func", func: ninth_secondary_swipe }
+		],
 		"s-434-9000-1108-0": [{ type: "func", func: boss_backattack_event_new, args: [1108] }],
 		"s-434-9000-1114-0": [
 			{ type: "text", sub_type: "message", message_RU: "Таргет", message: "Target Attack" },
@@ -1116,19 +1162,25 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-434-9000-1408-0": [{ type: "func", func: ninth_new_swipe_event, args: [1408] }],
 		"s-434-9000-2101-0": "s-434-9000-1101-0",
 		"s-434-9000-2102-0": "s-434-9000-1102-0",
-		"s-434-9000-2103-0": [{ type: "func", func: boss_backattack_event_new, args: [2103] }],
+		"s-434-9000-2103-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [2103] },
+			{ type: "func", func: ninth_secondary_swipe }
+		],
 		"s-434-9000-2105-0": [{ type: "func", func: boss_backattack_event_new, args: [2105] }],
-		"s-434-9000-2106-0": [{ type: "func", func: boss_backattack_event_new, args: [2106] }],
+		"s-434-9000-2106-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [2106] },
+			{ type: "func", func: ninth_secondary_swipe }
+		],
 		"s-434-9000-2108-0": [{ type: "func", func: boss_backattack_event_new, args: [2108] }],
 		"s-434-9000-2112-0": "s-434-9000-1112-0",
 		"s-434-9000-1303-0": [{ type: "text", sub_type: "message", message_RU: "Крутилка", message: "Spin Attack" }],
 		"s-434-9000-1401-0": [{ type: "func", func: ninth_old_swipe_event, args: [1401] }],
 		"s-434-9000-1402-0": [{ type: "func", func: ninth_old_swipe_event, args: [1402] }],
-		"s-434-9000-1301-0": [{ type: "text", sub_type: "message", message_RU: "Вопль", message: "Scream" }],
+		"s-434-9000-1301-0": [{ type: "text", sub_type: "message", message_RU: "Стан", message: "Incoming Stun" }],
 		"s-434-9000-2114-0": "s-434-9000-1114-0",
 		"s-434-9000-2115-0": "s-434-9000-1115-0",
 		"s-434-9000-2117-0": "s-434-9000-1117-0",
-		"s-434-9000-1801-0": [{ type: "text", sub_type: "message", message_RU: "Вопль", message: "Scream" }],
+		"s-434-9000-1801-0": [{ type: "text", sub_type: "message", message_RU: "Стан", message: "Incoming Stun" }],
 		"s-434-9000-1312-0": [{ type: "text", sub_type: "message", message_RU: "Миники", message: "Minions" }],
 
 		// Manyaa floor 10
@@ -1175,7 +1227,9 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-434-10000-3104-0": [
 			{ type: "text", sub_type: "message", message: "Jump (Stun)", message_RU: "Прыжок (стан)" },
-			{ type: "spawn", func: "circle", args: [true, 553, 0, 0, 20, 200, 0, 1500] }
+			{ type: "spawn", func: "circle", args: [true, 553, 0, 10, 25, 200, 0, 1500] },
+			{ type: "spawn", func: "circle", args: [true, 553, 45, 220, 25, 90, 0, 1500] },
+			{ type: "spawn", func: "circle", args: [true, 553, -45, 220, 25, 90, 0, 1500] }
 		],
 		"s-434-10000-3108-0": [{ type: "text", sub_type: "message", message: "Fly (Puddle)", message_RU: "Полет (лужа)" }],
 		"s-434-10000-3108-2": [{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 20, 200, 0, 1250] }],
