@@ -81,15 +81,14 @@ module.exports = (dispatch, handlers, guide, lang) => {
 				const pattern = !debuffs_thirdfloor[i] ? mechanic.order[i] : mechanic.order[i].counter;
 
 				for (const offset of pattern.offsets) {
-					handlers.event([{
-						"type": "spawn",
+					handlers.spawn({
 						"id": 106,
 						// "id": 537,
 						"delay": mechanic.delays[i] / ent.speed,
 						"sub_delay": 1466 / ent.speed,
 						"distance": pattern.distance,
 						"offset": offset
-					}]);
+					}, ent);
 				}
 			}
 		}
