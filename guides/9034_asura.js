@@ -2,8 +2,99 @@
 //
 // made by TristanPW / Vampic
 
+const EventEmitter = require("events").EventEmitter;
+
+// version 1.03
+class ChatLink extends EventEmitter {
+	constructor(mod) {
+		super();
+
+		this._min = 4415e4;
+		this._max = this._min + 1e4;
+
+		this._pointer = this._min;
+
+		mod.hook("C_REQUEST_NONDB_ITEM_INFO", "*", event => {
+			if (event.item <= this._max && event.item >= this._min) {
+				process.nextTick(() => this.emit(event.item));
+				return false;
+			}
+		});
+	}
+
+	get(name, callback) {
+		this._pointer++;
+
+		if (this._pointer > this._max) {
+			this._pointer = this._min;
+		}
+
+		this.on(this._pointer, callback);
+
+		return `<ChatLinkAction param="1#####${this._pointer}@-1@Link">${name}</ChatLinkAction>`;
+	}
+
+	get pointer() {
+		return this._pointer;
+	}
+
+	set pointer(pointer) {
+		this._pointer = pointer;
+	}
+
+	destructor() {
+		this.removeAllListeners();
+		this._pointer = this._min;
+	}
+}
+
 module.exports = (dispatch, handlers, guide, lang) => {
 	guide.type = SP;
+
+	if (global._teraGuide_9034_asura_chatLink) {
+		global._teraGuide_9034_asura_chatLink.destructor();
+		delete global._teraGuide_9034_asura_chatLink;
+	}
+
+	global._teraGuide_9034_asura_chatLink = new ChatLink(dispatch);
+
+	function showMessageForSettings() {
+		global._teraGuide_9034_asura_chatLink.destructor();
+
+		const buttonOff = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Выключить" : "Disable"), () => {
+			guide.settings.firstBossCageMechObjects = false;
+			showMessageForSettings();
+		});
+		const buttonV1 = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Мутировавший гриб" : "Mutated Mushroom"), () => {
+			guide.settings.firstBossCageMechObjects = "Mushroom";
+			showMessageForSettings();
+		});
+		const buttonV2 = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Галенит" : "Galborne Ore"), () => {
+			guide.settings.firstBossCageMechObjects = "Galborne";
+			showMessageForSettings();
+		});
+		const resultString = `<font color="${guide.settings.firstBossCageMechObjects === false ? "#00ff00" : "#ff0000"}">[${buttonOff}]</font> <font color="${(guide.settings.firstBossCageMechObjects === "Mushroom" || guide.settings.firstBossCageMechObjects === undefined) ? "#00ff00" : "#ff0000"}">[${buttonV1}]</font> <font color="${guide.settings.firstBossCageMechObjects === "Galborne" ? "#00ff00" : "#ff0000"}">[${buttonV2}]</font>`;
+
+		dispatch._mod.command.message(lang.language === "ru" ? `<font color="#ffff00">Выберите объект для отрисовки клетки на первом боссе:</font> ${resultString}` : `<font color="#ffff00">Select an object to draw a cell on the first boss:</font> ${resultString}`);
+	}
+
+	let has_first_message_for_settings = false;
+
+	dispatch.hook("S_LOAD_TOPO", "*", () => {
+		if (has_first_message_for_settings) return;
+
+		has_first_message_for_settings = true;
+
+		dispatch.setTimeout(showMessageForSettings, 5000);
+	});
+
+	dispatch.setTimeout(() => {
+		if (!has_first_message_for_settings) {
+			has_first_message_for_settings = true;
+
+			showMessageForSettings();
+		}
+	}, 500);
 
 	// THIRD FLOOR
 	let third_has_target_debuff = false;
@@ -73,7 +164,23 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	}
 
 	function cage_mechanic_thirdfloor(skillId, ent) {
+		if (guide.settings.firstBossCageMechObjects === false) return;
+
+		// Если делать ссылкой то иногда может посчитать что он сместился куда-то и отрисоваться хрен пойми где
+		const entLoc = ent.loc;
+		const entW = ent.w;
+		const entClone = { ...ent };
+		entClone.loc = entLoc;
+		entClone.w = entW;
+
 		const mechanic = Mechanics[skillId];
+		let objId = 537;
+
+		if (guide.settings.firstBossCageMechObjects === "Galborne") {
+			objId = 106;
+		} else if (guide.settings.firstBossCageMechObjects === "Mushroom") {
+			objId = 537;
+		}
 
 		if (mechanic && ent.stage == 0) {
 			// eslint-disable-next-line guard-for-in
@@ -82,16 +189,29 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 				for (const offset of pattern.offsets) {
 					handlers.spawn({
-						"id": 106,
-						// "id": 537,
+						"id": objId,
 						"delay": mechanic.delays[i] / ent.speed,
 						"sub_delay": 1466 / ent.speed,
 						"distance": pattern.distance,
 						"offset": offset
-					}, ent);
+					}, entClone);
 				}
 			}
 		}
+	}
+
+	function third_bait_evade(ent) {
+		third_combo_count = 0;
+		third_combo_last_128 = null;
+		third_combo_last_129 = null;
+
+		dispatch.setTimeout(() => {
+			handlers.text({
+				sub_type: "message",
+				message: "Evade",
+				message_RU: "Эвейд"
+			});
+		}, 3350 / ent.speed);
 	}
 
 	function third_combo_last_front() {
@@ -141,8 +261,17 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	}
 
 	// SEVENTH FLOOR
-
 	let seventh_fifty = false;
+	let seventh_is_out_spin = false;
+	let seventh_prev = null;
+	let seventh_curr = null;
+
+	dispatch.hook("S_ACTION_STAGE", 9, event => {
+		if (event.skill.huntingZoneId !== 434 || event.templateId !== 7000) return;
+
+		seventh_prev = seventh_curr;
+		seventh_curr = event.skill.id;
+	});
 
 	dispatch.hook("S_BOSS_GAGE_INFO", 3, event => {
 		if (event.huntingZoneId !== 434 || event.templateId !== 7000) return;
@@ -210,16 +339,16 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	function seventh_spawn_tables(is_normal_world, ent) {
 		const regularWorld = [
-			{ type: "spawn", func: "marker", args: [false, 0, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 72, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 144, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 216, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 288, 225, 2000, 1500, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 36, 225, 0, 2000, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 108, 225, 0, 2000, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 180, 225, 0, 2000, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 252, 225, 0, 2000, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 324, 225, 0, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 0, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 72, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 144, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 216, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 288, 225, 2000, 2000, true, ["Safe", "Spot"]] },
 			// general safe spots
 			{ "type": "spawn", "sub_type": "build_object", "id": 1, "sub_delay": 4000, "distance": 525, "offset": 2.8, "ownerName": "SAFE SPOT", "message": "SAFE" },
 			{ "type": "spawn", "sub_type": "build_object", "id": 1, "sub_delay": 4000, "distance": 525, "offset": 3.46, "ownerName": "SAFE SPOT", "message": "SAFE" },
@@ -239,11 +368,11 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "marker", args: [false, 144, 225, 0, 2000, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 216, 225, 0, 2000, true, ["Safe", "Spot"]] },
 			{ type: "spawn", func: "marker", args: [false, 288, 225, 0, 2000, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 36, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 108, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 180, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 252, 225, 2000, 1500, true, ["Safe", "Spot"]] },
-			{ type: "spawn", func: "marker", args: [false, 324, 225, 2000, 1500, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 36, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 108, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 180, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 252, 225, 2000, 2000, true, ["Safe", "Spot"]] },
+			{ type: "spawn", func: "marker", args: [false, 324, 225, 2000, 2000, true, ["Safe", "Spot"]] },
 			// general safe spots
 			{ "type": "spawn", "sub_type": "build_object", "id": 1, "sub_delay": 4000, "distance": 525, "offset": 2.8, "ownerName": "SAFE SPOT", "message": "SAFE" },
 			{ "type": "spawn", "sub_type": "build_object", "id": 1, "sub_delay": 4000, "distance": 525, "offset": 3.46, "ownerName": "SAFE SPOT", "message": "SAFE" },
@@ -273,7 +402,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	let is_eighth_floor = false;
 	let carpet_mob_game_id = null;
-	let carpet_mob_angle = null;
 	let carpet_event_done = false;
 	const BackCarpetMarkers = 0;
 	const FrontCarpetMarkers = 1;
@@ -286,11 +414,21 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		[{ type: "text", sub_type: "notification", message: "Right -> Left", message_RU: "Правый -> Левый" }]
 	];
 
+	function eighth_drain_evade(ent) {
+		dispatch.setTimeout(() => {
+			handlers.text({
+				sub_type: "message",
+				message: "Evade",
+				message_RU: "Эвейд"
+			});
+		}, 14700 / ent.speed);
+	}
 
 	function curse_mob_spawned(ent) {
 		const angle = ent.loc.angleTo(boss_data.loc);
 		const curse_msg = angle > 0 ? "Curse Left" : "Curse Right";
 		const curse_msg_ru = angle > 0 ? "Дебафф Левый" : "Дебафф Правый";
+
 		handlers.text({
 			sub_type: "message",
 			message: curse_msg,
@@ -304,50 +442,54 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			message_RU: "Появился ковровый моб",
 			message: "Carpet Mob Spawned"
 		});
+
 		carpet_mob_game_id = ent.gameId;
-		carpet_mob_angle = ent.loc.angleTo(boss_data.loc);
 	}
 
 	function carpet_mob_reset_event() {
-		carpet_mob_angle = null;
 		carpet_mob_game_id = null;
 		carpet_event_done = false;
 	}
 
 	dispatch.hook("S_CREATURE_ROTATE", "*", e => {
-		if (!is_eighth_floor) return;
-		if (e.gameId != carpet_mob_game_id) return;
-		if (carpet_event_done) return;
-		carpet_event_done = true;
-		let pattern = null;
-		const angle = e.w.toFixed(5);
+		if (!is_eighth_floor || e.gameId != carpet_mob_game_id || carpet_event_done) return;
 
-		if (carpet_mob_angle > Math.PI / 2 && carpet_mob_angle < Math.PI) {
-			// front left
-			pattern = angle > 0 ? RightCarpetMarkers : BackCarpetMarkers;
-		} else if (carpet_mob_angle > 0 && carpet_mob_angle < Math.PI / 2) {
-			// back left
-			pattern = angle < -2 ? RightCarpetMarkers : FrontCarpetMarkers;
-		} else if (carpet_mob_angle > -Math.PI && carpet_mob_angle < -Math.PI / 2) {
-			// front right
-			pattern = angle > 1 ? BackCarpetMarkers : LeftCarpetMarkers;
-		} else {
-			// back right
-			pattern = angle > 0 ? FrontCarpetMarkers : LeftCarpetMarkers;
+		carpet_event_done = true;
+
+		// handlers.event([{ type: "text", sub_type: "notification", message: `S_CREATURE_ROTATE w: ${e.w}`, speech: false }]);
+		let pattern = null;
+
+		if ((e.w <= -0.065 && e.w >= -0.095) || (e.w <= 0.095 && e.w >= 0.065)) {
+			pattern = RightCarpetMarkers;
+		} else if (e.w <= -1.45 && e.w >= -1.85) {
+			pattern = FrontCarpetMarkers;
+		} else if ((e.w <= 3.075 && e.w >= 3.045) || e.w <= -3.115 && e.w >= -3.145) {
+			pattern = LeftCarpetMarkers;
+		} else if (e.w <= 1.85 && e.w >= 1.45) {
+			pattern = BackCarpetMarkers;
 		}
+
+		// console.log("S_CREATURE_ROTATE", { w: e.w, pattern });
 
 		handlers.event(CarpetMarkers[pattern]);
 	});
 
 	// 9th floor darkan
-	let secondary_aggro_date = 0;
 	let is_ninth_floor = false;
 	let ninth_floor_fifty = false;
+	let ninth_has_secondary_aggro = false;
 
 	dispatch.hook("S_USER_EFFECT", "*", e => {
 		if (!is_ninth_floor) return;
-		if (e.circle == 3 && e.operation == 1 && e.source == boss_data.gameId) {
-			secondary_aggro_date = new Date();
+
+		console.log("secondary 9th", { e });
+
+		if (e.circle == 3 && e.source == boss_data.gameId) {
+			if (e.operation == 1) {
+				ninth_has_secondary_aggro = true;
+			} else if (e.operation == 2) {
+				ninth_has_secondary_aggro = false;
+			}
 		}
 	});
 
@@ -367,6 +509,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	dispatch.hook("S_NPC_STATUS", 2, event => {
 		if (!is_ninth_floor) return;
+
 		if (event.enraged && event.remainingEnrageTime == 36000) {
 			enrage_time = new Date();
 			enrage = true;
@@ -380,19 +523,18 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			back_print = true;
 			is_one_back = end_back_time > 0 && end_back_time < 1500;
 
-			if (is_one_back) {
-				handlers.text({
-					sub_type: "message",
-					message_RU: "360",
-					message: "360"
-				});
-			}
+			handlers.text({
+				sub_type: "message",
+				message: is_one_back ? "Back!" : "Triple Strikes | Split Strikes",
+				message_RU: is_one_back ? "Задняя!" : "Три удара | Откиды"
+			});
 		}
+
 		dispatch.setTimeout(() => back_print = false, 3500);
 	}
 
 	function ninth_secondary_swipe(ent) {
-		if (Date.now() - secondary_aggro_date > 1500 || !ninth_floor_fifty) return;
+		if (!ninth_has_secondary_aggro || !ninth_floor_fifty) return;
 
 		if (ent.skill.id % 1000 === 106) {
 			return handlers.event([
@@ -438,6 +580,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}
 
 		dispatch.setTimeout(() => prev_prev = 0, back_combo_time_diff);
+
 		if (prev == 1106 && curr == 1103 && time_diff < 1000) {
 			handlers.text({
 				sub_type: "message",
@@ -453,54 +596,68 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		}
 	}
 
+	let ninth_swipe_wings_curr = 0;
+
+	dispatch.hook("S_ACTION_STAGE", 9, event => {
+		if (event.skill.huntingZoneId !== 434 || event.templateId !== 9000) return;
+
+		if (![1407, 1408].includes(event.skill.id)) {
+			ninth_swipe_wings_curr = 0;
+		}
+	});
+
 	function ninth_new_swipe_event(curr, ent) {
+		handlers.despawn_all({ tag: "ninth_wings" });
+		ninth_swipe_wings_curr = curr;
+
 		ninth_triple_swipe_remaining--;
+
 		if (ninth_triple_swipe_remaining > 0) {
 			if (curr == 1407) {
 				handlers.event([
-					{ type: "text", sub_type: "message", message_RU: "Левый", message: "Left" },
-					{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000] },
-					{ type: "spawn", func: "marker", args: [false, 300, 100, 0, 2000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 230, 100, 0, 2000, true, null] },
-					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 2000] },
-					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 2000] },
-					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 2000] },
-					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 2000] }
+					{ type: "text", sub_type: "message", message_RU: "Левый", message: "Left", tag: "ninth_wings" },
+					{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "marker", args: [false, 300, 100, 0, 2000, true, null], tag: "ninth_wings" },
+					{ type: "spawn", func: "marker", args: [false, 230, 100, 0, 2000, true, null], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 2000], tag: "ninth_wings" }
 				]);
 			} else {
 				handlers.event([
-					{ type: "text", sub_type: "message", message_RU: "Правый", message: "Right" },
-					{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000] },
-					{ type: "spawn", func: "marker", args: [false, 60, 100, 0, 2000, true, null] },
-					{ type: "spawn", func: "marker", args: [false, 130, 100, 0, 2000, true, null] },
-					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 2000] },
-					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 2000] },
-					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 2000] },
-					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2000] }
+					{ type: "text", sub_type: "message", message_RU: "Правый", message: "Right", tag: "ninth_wings" },
+					{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "marker", args: [false, 60, 100, 0, 2000, true, null], tag: "ninth_wings" },
+					{ type: "spawn", func: "marker", args: [false, 130, 100, 0, 2000, true, null], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 2000], tag: "ninth_wings" },
+					{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2000], tag: "ninth_wings" }
 
 				]);
 			}
 		} else if (curr == 1407) {
 			handlers.event([
-				{ type: "text", sub_type: "message", message_RU: "Левый", message: "Left (Double)" },
-				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000] },
-				{ type: "spawn", func: "marker", args: [false, 300, 100, 0, 2000, true, null] },
-				{ type: "spawn", func: "marker", args: [false, 230, 100, 0, 2000, true, null] },
-				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 2000] },
-				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 2000] },
-				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 2000] },
-				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 2000] }
+				{ type: "text", sub_type: "message", message_RU: "Левый", message: "Left (Double)", tag: "ninth_wings" },
+				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "marker", args: [false, 300, 100, 0, 2000, true, null], tag: "ninth_wings" },
+				{ type: "spawn", func: "marker", args: [false, 230, 100, 0, 2000, true, null], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 20, 160, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 12, 220, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 10, 300, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [0, 180, 912, 0, 0, 8, 360, 0, 2000], tag: "ninth_wings" }
 			]);
 		} else {
 			handlers.event([
-				{ type: "text", sub_type: "message", message_RU: "Правый", message: "Right (Double)" },
-				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000] },
-				{ type: "spawn", func: "marker", args: [false, 60, 100, 0, 2000, true, null] },
-				{ type: "spawn", func: "marker", args: [false, 130, 100, 0, 2000, true, null] },
-				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 2000] },
-				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 2000] },
-				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 2000] },
-				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2000] }
+				{ type: "text", sub_type: "message", message_RU: "Правый", message: "Right (Double)", tag: "ninth_wings" },
+				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "marker", args: [false, 60, 100, 0, 2000, true, null], tag: "ninth_wings" },
+				{ type: "spawn", func: "marker", args: [false, 130, 100, 0, 2000, true, null], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 20, 160, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 12, 220, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 10, 300, 0, 2000], tag: "ninth_wings" },
+				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2000], tag: "ninth_wings" }
 			]);
 		}
 	}
@@ -515,6 +672,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		const message_left_id = enrage ? 1 : 0;
 		const message_right_id = enrage ? 0 : 1;
 		const last_triple_swipe_double = ninth_floor_eighty && curr_triple_swipe_remaining == 1;
+
 		function get_swipe_markers(message_RU, message) {
 			return [[
 				{ type: "text", sub_type: "message", message_RU: message_RU, message: message },
@@ -537,9 +695,11 @@ module.exports = (dispatch, handlers, guide, lang) => {
 				{ type: "spawn", func: "semicircle", args: [180, 360, 912, 0, 0, 8, 360, 0, 2000] }
 			]];
 		}
+
 		if (ninth_triple_swipe_remaining > 0) {
 			ninth_triple_swipe_remaining--;
 		}
+
 		if (ninth_triple_swipe_remaining == 0 && (curr_triple_swipe_remaining == 0 || last_triple_swipe_double)) {
 			if (curr == 1401) {
 				handlers.event(get_swipe_markers(...message_left)[message_left_id]);
@@ -579,8 +739,8 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			if (ninth_floor_fifty) {
 				handlers.text({
 					sub_type: "notification",
-					message: "Secondary Soon!",
-					message_RU: "Вторичный скоро!"
+					message: "Secondary Soon",
+					message_RU: "Вторичный скоро"
 				});
 			}
 		}, 45000);
@@ -596,7 +756,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		prev_date = 0;
 
 		// reset aggro event
-		secondary_aggro_date = 0;
+		ninth_has_secondary_aggro = false;
 		is_ninth_floor = false;
 		ninth_floor_fifty = false;
 		ninth_floor_eighty = false;
@@ -886,19 +1046,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-434-3000-4502-1": "s-434-3000-1502-1",
 		"s-434-3000-1302-0": [
 			{ type: "text", sub_type: "message", message: "Bait (Target)", message_RU: "Байт (таргет)" },
-			{ type: "func", func: (ent) => {
-				third_combo_count = 0;
-				third_combo_last_128 = null;
-				third_combo_last_129 = null;
-
-				dispatch.setTimeout(() => {
-					handlers.text({
-						sub_type: "message",
-						message: "Evade",
-						message_RU: "Эвейд"
-					});
-				}, 3350 / ent.speed);
-			} }
+			{ type: "func", func: third_bait_evade }
 		],
 		"s-434-3000-1906-0": [
 			{ type: "text", sub_type: "message", message: "Donuts: OUT | IN | OUT", message_RU: "Бублики: От него | К нему | От него" },
@@ -936,6 +1084,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"dm-0-0-90340705": [{ type: "func", func: seventh_message_event, args: [1045] }], // Lakan intends to kill all of you at once.
 		"s-434-7000-1105-0": [
 			{ type: "text", sub_type: "message", message: "Discarding", message_RU: "Откид пятка" },
+			{ type: "text", sub_type: "message", message: "Place block at the back", message_RU: "Поставить блок сзади", delay: 100, class_position: "tank" },
 			{ type: "spawn", func: "vector", args: [553, 0, 0, -95, 850, 0, 3000] },
 			{ type: "spawn", func: "vector", args: [553, 0, 0, 95, 850, 0, 3000] }
 		],
@@ -951,13 +1100,21 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 130, 0, 270, 0, 2500] }
 		],
 		"s-434-7000-2130-0": "s-434-7000-1130-0",
+		"s-434-7000-1103-0": [
+			{ "type": "text", "sub_type": "message", "message": "OUT -> Donuts IN", message_RU: "От него -> Бублики к нему", check_func: () => seventh_is_out_spin && [1105, 2105].includes(seventh_prev) },
+			{ "type": "text", "sub_type": "message", "message": "IN -> Donuts OUT", message_RU: "К нему -> Бублики от него", check_func: () => !seventh_is_out_spin && [1105, 2105].includes(seventh_prev) }
+		],
+		"s-434-7000-2103-0": "s-434-7000-1103-0",
 		"s-434-7000-1132-0": [
+			{ type: "func", func: () => seventh_is_out_spin = false },
 			{ type: "text", sub_type: "message", message: "AOE Shield", message_RU: "АОЕ щитом!" },
 			{ type: "spawn", func: "semicircle", args: [-65, 65, 553, 0, 0, null, 600, 0, 3000] },
 			{ type: "spawn", func: "vector", args: [553, 0, 40, -65, 600, 0, 3000] },
 			{ type: "spawn", func: "vector", args: [553, 0, 40, 65, 600, 0, 3000] }
 		],
 		"s-434-7000-2132-0": "s-434-7000-1132-0",
+		"s-434-7000-1131-0": [{ type: "func", func: () => seventh_is_out_spin = true }],
+		"s-434-7000-2131-0": "s-434-7000-1131-0",
 		"s-434-7000-1133-0": [
 			{ type: "text", sub_type: "message", message: "AOE Shield", message_RU: "АОЕ щитом!" },
 			{ type: "spawn", func: "semicircle", args: [-65, 65, 553, 0, 0, null, 600, 0, 6000] },
@@ -1011,12 +1168,12 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-434-7000-2153-0": "s-434-7000-1153-0",
 		"s-434-7000-1154-0": [
-			{ "type": "text", "sub_type": "message", "message": "OUT", message_RU: "От него => К нему" },
+			{ "type": "text", "sub_type": "message", "message": "OUT", message_RU: "От него -> К нему" },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }
 		],
 		"s-434-7000-2154-0": "s-434-7000-1154-0",
 		"s-434-7000-1155-0": [
-			{ "type": "text", "sub_type": "message", "message": "IN", message_RU: "К нему => От него" },
+			{ "type": "text", "sub_type": "message", "message": "IN", message_RU: "К нему -> От него" },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }
 		],
 		"s-434-7000-2155-0": "s-434-7000-1155-0",
@@ -1055,15 +1212,9 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "text", sub_type: "message", message: "Spread", message_RU: "Круги (отдельно!)", delay: 7000 },
 			{ type: "text", sub_type: "notification", message: "Spread", message_RU: "Круги (отдельно!)", delay: 7000 }
 		],
-		"s-434-7000-1144-0": [
-			{ "type": "text", "sub_type": "message", "message": "OUT", message_RU: "От него" },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }
-		],
+		"s-434-7000-1144-0": [{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }],
 		"s-434-7000-2144-0": "s-434-7000-1144-0",
-		"s-434-7000-1145-0": [
-			{ "type": "text", "sub_type": "message", "message": "IN", message_RU: "К нему" },
-			{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }
-		],
+		"s-434-7000-1145-0": [{ type: "spawn", func: "circle", args: [false, 553, 0, 10, 0, 250, 0, 3000] }],
 		"s-434-7000-2145-0": "s-434-7000-1145-0",
 
 		// EIGHTH FLOOR
@@ -1083,7 +1234,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"qb-434-8000-459006": [{ type: "text", sub_type: "alert", message: "Red Circles", message_RU: "Красные круги" }],
 		"qb-434-8000-434801": [
 			{ type: "text", sub_type: "message", message: "Orbs", message_RU: "Сферы" },
-			{ type: "text", sub_type: "message", delay: 10000, message: "Attention Orbs", message_RU: "Сферы внимания" }
+			{ type: "text", sub_type: "message", delay: 10000, message: "Attention Orbs", message_RU: "Сферы внимание" }
 		],
 		"s-434-8200-3102-0": [{ type: "text", sub_type: "message", message: "Yellow Circles", message_RU: "Желтые круги" }],
 		"s-434-8000-1110-0": [
@@ -1094,10 +1245,22 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "circle", args: [false, 553, 315, 180, 12, 230, 0, 3000] }
 		],
 		"s-434-8000-2110-0": "s-434-8000-1110-0",
+		"s-434-8000-1303-0": [{ type: "func", func: eighth_drain_evade }],
+		"s-434-8000-2303-0": "s-434-8000-1303-0",
 
 		// 9th FLOOR
-		"rb-434-9000": [{ type: "func", func: () => enrage = true }, { type: "func", func: () => enrage_time = new Date() }],
-		"re-434-9000": [{ type: "func", func: () => enrage = false }, { type: "func", func: () => enrage_time = 0 }],
+		"rb-434-9000": [
+			{ type: "func", func: () => enrage = true },
+			{ type: "func", func: () => enrage_time = new Date() },
+			{ type: "func", func: () => ninth_triple_swipe_remaining++, check_func: () => ninth_swipe_wings_curr },
+			{ type: "func", func: () => ninth_new_swipe_event, args: [ninth_swipe_wings_curr], check_func: () => ninth_swipe_wings_curr }
+		],
+		"re-434-9000": [
+			{ type: "func", func: () => enrage = false },
+			{ type: "func", func: () => enrage_time = 0 },
+			{ type: "func", func: () => ninth_triple_swipe_remaining++, check_func: () => ninth_swipe_wings_curr },
+			{ type: "func", func: () => ninth_new_swipe_event, args: [ninth_swipe_wings_curr], check_func: () => ninth_swipe_wings_curr }
+		],
 		"ns-434-9000": [
 			{ type: "func", func: () => is_ninth_floor = true },
 			{ type: "func", func: ninth_triples_event },
@@ -1123,8 +1286,11 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "func", func: ninth_triples_event }
 		],
 		"s-434-9000-1112-0": [{ type: "text", sub_type: "message", message_RU: "Рывок назад", message: "Back Move" }],
-		"s-434-9000-1102-0": [{ type: "func", func: () => back_time = new Date() }],
+		"s-434-9000-2112-0": "s-434-9000-1112-0",
 		"s-434-9000-1101-0": [{ type: "func", func: boss_backattack_event }],
+		"s-434-9000-2101-0": "s-434-9000-1101-0",
+		"s-434-9000-1102-0": [{ type: "func", func: () => back_time = new Date() }],
+		"s-434-9000-2102-0": "s-434-9000-1102-0",
 		"s-434-9000-1106-0": [
 			{ type: "func", func: boss_backattack_event_new, args: [1106] },
 			{ type: "func", func: ninth_secondary_swipe }
@@ -1143,24 +1309,26 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "spawn", func: "vector", args: [553, 270, 75, 0, 1300, 0, 2500] },
 			{ type: "spawn", func: "vector", args: [553, 270, 150, 0, 1300, 0, 2500] }
 		],
+		"s-434-9000-2114-0": "s-434-9000-1114-0",
 		"s-434-9000-1115-0": [
-			{ type: "text", sub_type: "message", message: "3" },
-			{ type: "text", sub_type: "message", delay: 1000, message: "2" },
-			{ type: "text", sub_type: "message", delay: 2000, message: "1" },
-			{ type: "text", sub_type: "message", delay: 3200, message_RU: "Эвейд", message: "Dodge" }
+			{ type: "text", sub_type: "message", message: "Gather on secondary aggro", message_RU: "Собраться на вторичном агро" },
+			{ type: "text", sub_type: "message", delay: 1067, message: "3" },
+			{ type: "text", sub_type: "message", delay: 2134, message: "2" },
+			{ type: "text", sub_type: "message", delay: 3201, message: "1" },
+			{ type: "text", sub_type: "message", delay: 4271, message_RU: "Выйти из луж", message: "Get out of the puddles" }
 		],
+		"s-434-9000-2115-0": "s-434-9000-1115-0",
 		"s-434-9000-1117-0": [
 			{ type: "text", sub_type: "message", message_RU: "2 удара вперед", message: "2хFront" },
 			{ type: "text", sub_type: "message", delay: 2500, message_RU: "Толчок вперед", message: "Push front" }
 		],
+		"s-434-9000-2117-0": "s-434-9000-1117-0",
 		"s-434-9000-1302-0": [
 			{ type: "text", sub_type: "message", message_RU: "АоЕ", message: "AOE" },
 			{ type: "spawn", func: "circle", args: [false, 553, 0, 0, 8, 500, 100, 6000] }
 		],
 		"s-434-9000-1407-0": [{ type: "func", func: ninth_new_swipe_event, args: [1407] }],
 		"s-434-9000-1408-0": [{ type: "func", func: ninth_new_swipe_event, args: [1408] }],
-		"s-434-9000-2101-0": "s-434-9000-1101-0",
-		"s-434-9000-2102-0": "s-434-9000-1102-0",
 		"s-434-9000-2103-0": [
 			{ type: "func", func: boss_backattack_event_new, args: [2103] },
 			{ type: "func", func: ninth_secondary_swipe }
@@ -1171,19 +1339,14 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			{ type: "func", func: ninth_secondary_swipe }
 		],
 		"s-434-9000-2108-0": [{ type: "func", func: boss_backattack_event_new, args: [2108] }],
-		"s-434-9000-2112-0": "s-434-9000-1112-0",
 		"s-434-9000-1303-0": [{ type: "text", sub_type: "message", message_RU: "Крутилка", message: "Spin Attack" }],
 		"s-434-9000-1401-0": [{ type: "func", func: ninth_old_swipe_event, args: [1401] }],
 		"s-434-9000-1402-0": [{ type: "func", func: ninth_old_swipe_event, args: [1402] }],
 		"s-434-9000-1301-0": [{ type: "text", sub_type: "message", message_RU: "Стан", message: "Incoming Stun" }],
-		"s-434-9000-2114-0": "s-434-9000-1114-0",
-		"s-434-9000-2115-0": "s-434-9000-1115-0",
-		"s-434-9000-2117-0": "s-434-9000-1117-0",
 		"s-434-9000-1801-0": [{ type: "text", sub_type: "message", message_RU: "Стан", message: "Incoming Stun" }],
 		"s-434-9000-1312-0": [{ type: "text", sub_type: "message", message_RU: "Миники", message: "Minions" }],
 
 		// Manyaa floor 10
-
 		"ns-434-10000": [
 			{ type: "func", func: () => tenth_debuff_list = [] },
 			{ type: "func", func: () => tenth_curr_debuff_id = null }
