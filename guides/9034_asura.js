@@ -482,8 +482,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	dispatch.hook("S_USER_EFFECT", "*", e => {
 		if (!is_ninth_floor) return;
 
-		console.log("secondary 9th", { e });
-
 		if (e.circle == 3 && e.source == boss_data.gameId) {
 			if (e.operation == 1) {
 				ninth_has_secondary_aggro = true;
@@ -536,7 +534,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	function ninth_secondary_swipe(ent) {
 		if (!ninth_has_secondary_aggro || !ninth_floor_fifty) return;
 
-		if (ent.skill.id % 1000 === 106) {
+		if (ent.skill.id % 1000 === 108) {
 			return handlers.event([
 				{ type: "text", sub_type: "message", message_RU: "Левый удар", message: "Left swipe" },
 				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2500] },
@@ -549,7 +547,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			]);
 		}
 
-		if (ent.skill.id % 1000 === 103) {
+		if (ent.skill.id % 1000 === 105) {
 			return handlers.event([
 				{ type: "text", sub_type: "message", message_RU: "Правый удар", message: "Right swipe" },
 				{ type: "spawn", func: "vector", args: [553, 360, 400, 180, 800, 0, 2500] },
@@ -1291,16 +1289,16 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"s-434-9000-2101-0": "s-434-9000-1101-0",
 		"s-434-9000-1102-0": [{ type: "func", func: () => back_time = new Date() }],
 		"s-434-9000-2102-0": "s-434-9000-1102-0",
-		"s-434-9000-1106-0": [
-			{ type: "func", func: boss_backattack_event_new, args: [1106] },
+		"s-434-9000-1106-0": [{ type: "func", func: boss_backattack_event_new, args: [1106] }],
+		"s-434-9000-1105-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [1105] },
 			{ type: "func", func: ninth_secondary_swipe }
 		],
-		"s-434-9000-1105-0": [{ type: "func", func: boss_backattack_event_new, args: [1105] }],
-		"s-434-9000-1103-0": [
-			{ type: "func", func: boss_backattack_event_new, args: [1103] },
+		"s-434-9000-1103-0": [{ type: "func", func: boss_backattack_event_new, args: [1103] }],
+		"s-434-9000-1108-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [1108] },
 			{ type: "func", func: ninth_secondary_swipe }
 		],
-		"s-434-9000-1108-0": [{ type: "func", func: boss_backattack_event_new, args: [1108] }],
 		"s-434-9000-1114-0": [
 			{ type: "text", sub_type: "message", message_RU: "Таргет", message: "Target Attack" },
 			{ type: "spawn", func: "vector", args: [553, 90, 150, 0, 1300, 0, 2500] },
@@ -1329,16 +1327,18 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		],
 		"s-434-9000-1407-0": [{ type: "func", func: ninth_new_swipe_event, args: [1407] }],
 		"s-434-9000-1408-0": [{ type: "func", func: ninth_new_swipe_event, args: [1408] }],
-		"s-434-9000-2103-0": [
-			{ type: "func", func: boss_backattack_event_new, args: [2103] },
+		"s-434-9000-2103-0": [{ type: "func", func: boss_backattack_event_new, args: [2103] }],
+		"s-434-9000-2105-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [2105] },
 			{ type: "func", func: ninth_secondary_swipe }
 		],
-		"s-434-9000-2105-0": [{ type: "func", func: boss_backattack_event_new, args: [2105] }],
 		"s-434-9000-2106-0": [
-			{ type: "func", func: boss_backattack_event_new, args: [2106] },
+			{ type: "func", func: boss_backattack_event_new, args: [2106] }
+		],
+		"s-434-9000-2108-0": [
+			{ type: "func", func: boss_backattack_event_new, args: [2108] },
 			{ type: "func", func: ninth_secondary_swipe }
 		],
-		"s-434-9000-2108-0": [{ type: "func", func: boss_backattack_event_new, args: [2108] }],
 		"s-434-9000-1303-0": [{ type: "text", sub_type: "message", message_RU: "Крутилка", message: "Spin Attack" }],
 		"s-434-9000-1401-0": [{ type: "func", func: ninth_old_swipe_event, args: [1401] }],
 		"s-434-9000-1402-0": [{ type: "func", func: ninth_old_swipe_event, args: [1402] }],
