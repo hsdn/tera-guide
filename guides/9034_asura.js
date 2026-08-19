@@ -65,15 +65,29 @@ module.exports = (dispatch, handlers, guide, lang) => {
 			guide.settings.firstBossCageMechObjects = false;
 			showMessageForSettings();
 		});
-		const buttonV1 = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Мутировавший гриб" : "Mutated Mushroom"), () => {
+
+		const buttonMushroom = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Мутировавший гриб" : "Mutated Mushroom"), () => {
 			guide.settings.firstBossCageMechObjects = "Mushroom";
 			showMessageForSettings();
 		});
-		const buttonV2 = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Галенит" : "Galborne Ore"), () => {
+
+		const buttonGalborne = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Галенит" : "Galborne Ore"), () => {
 			guide.settings.firstBossCageMechObjects = "Galborne";
 			showMessageForSettings();
 		});
-		const resultString = `<font color="${guide.settings.firstBossCageMechObjects === false ? "#00ff00" : "#ff0000"}">[${buttonOff}]</font> <font color="${(guide.settings.firstBossCageMechObjects === "Mushroom" || guide.settings.firstBossCageMechObjects === undefined) ? "#00ff00" : "#ff0000"}">[${buttonV1}]</font> <font color="${guide.settings.firstBossCageMechObjects === "Galborne" ? "#00ff00" : "#ff0000"}">[${buttonV2}]</font>`;
+
+		const buttonPillar = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Столб света" : "Pillar of light"), () => {
+			guide.settings.firstBossCageMechObjects = "Pillar";
+			showMessageForSettings();
+		});
+
+		const buttonSign = global._teraGuide_9034_asura_chatLink.get((lang.language === "ru" ? "Табличка" : "Sign"), () => {
+			guide.settings.firstBossCageMechObjects = "Sign";
+			showMessageForSettings();
+		});
+
+
+		const resultString = `<font color="${guide.settings.firstBossCageMechObjects === false ? "#00ff00" : "#ff0000"}">[${buttonOff}]</font> <font color="${guide.settings.firstBossCageMechObjects === "Sign" ? "#00ff00" : "#ff0000"}">[${buttonSign}]</font> <font color="${guide.settings.firstBossCageMechObjects === "Pillar" ? "#00ff00" : "#ff0000"}">[${buttonPillar}]</font> <font color="${(guide.settings.firstBossCageMechObjects === "Mushroom" || guide.settings.firstBossCageMechObjects === undefined) ? "#00ff00" : "#ff0000"}">[${buttonMushroom}]</font> <font color="${guide.settings.firstBossCageMechObjects === "Galborne" ? "#00ff00" : "#ff0000"}">[${buttonGalborne}]</font>`;
 
 		dispatch._mod.command.message(lang.language === "ru" ? `<font color="#ffff00">Выберите объект для отрисовки клетки на первом боссе:</font> ${resultString}` : `<font color="#ffff00">Select an object to draw a cell on the first boss:</font> ${resultString}`);
 	}
@@ -188,13 +202,37 @@ module.exports = (dispatch, handlers, guide, lang) => {
 				const pattern = !debuffs_thirdfloor[i] ? mechanic.order[i] : mechanic.order[i].counter;
 
 				for (const offset of pattern.offsets) {
-					handlers.spawn({
-						"id": objId,
-						"delay": mechanic.delays[i] / ent.speed,
-						"sub_delay": 1466 / ent.speed,
-						"distance": pattern.distance,
-						"offset": offset
-					}, entClone);
+					if (guide.settings.firstBossCageMechObjects === "Pillar") {
+						handlers.spawn({
+							"id": 89141,
+							"sub_type": "item",
+							"delay": mechanic.delays[i] / ent.speed,
+							"sub_delay": 1466 / ent.speed,
+							"distance": pattern.distance,
+							"offset": offset
+						}, entClone);
+					} else if (guide.settings.firstBossCageMechObjects === "Sign") {
+						handlers.spawn({
+							"func": "marker",
+							args: [
+								false,
+								offset * 180 / Math.PI,
+								pattern.distance,
+								mechanic.delays[i] / ent.speed,
+								1466 / ent.speed,
+								true,
+								["Safe", "Spot"]
+							]
+						}, entClone);
+					} else {
+						handlers.spawn({
+							"id": objId,
+							"delay": mechanic.delays[i] / ent.speed,
+							"sub_delay": 1466 / ent.speed,
+							"distance": pattern.distance,
+							"offset": offset
+						}, entClone);
+					}
 				}
 			}
 		}
@@ -426,8 +464,19 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 	function curse_mob_spawned(ent) {
 		const angle = ent.loc.angleTo(boss_data.loc);
-		const curse_msg = angle > 0 ? "Curse Left" : "Curse Right";
-		const curse_msg_ru = angle > 0 ? "Дебафф Левый" : "Дебафф Правый";
+		const is_left = ((angle > 2.1 && angle < 2.6) || (angle > -2.6 && angle < -2.1));
+		const curse_msg = is_left ? "Curse Left" : "Curse Right";
+		const curse_msg_ru = is_left ? "Дебафф слева" : "Дебафф справа";
+
+		// -2.3 - Слева-спереди
+		// 2.3 - Слева-сзади
+		// 0.7 - Справа-сзади
+		// -0.7 - Справа-спереди
+		// handlers.text({
+		// 	sub_type: "message",
+		// 	message: `angle to boss: ${angle}`,
+		// 	speech: false
+		// });
 
 		handlers.text({
 			sub_type: "message",
@@ -456,7 +505,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 
 		carpet_event_done = true;
 
-		// handlers.event([{ type: "text", sub_type: "notification", message: `S_CREATURE_ROTATE w: ${e.w}`, speech: false }]);
 		let pattern = null;
 
 		if ((e.w <= -0.065 && e.w >= -0.095) || (e.w <= 0.095 && e.w >= 0.065)) {
@@ -468,8 +516,6 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		} else if (e.w <= 1.85 && e.w >= 1.45) {
 			pattern = BackCarpetMarkers;
 		}
-
-		// console.log("S_CREATURE_ROTATE", { w: e.w, pattern });
 
 		handlers.event(CarpetMarkers[pattern]);
 	});
