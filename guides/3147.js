@@ -165,7 +165,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 		"am-3147-1000-31471006": [{ type: "func", func: () => curr_debuff_id = 3, check_func: () => curr_debuff_id === null }],
 		"am-3147-1000-31471007": [{ type: "func", func: () => curr_debuff_id = 4, check_func: () => curr_debuff_id === null }],
 
-		"am-3147-1000-310471008": [{ type: "func", func: debuff_event, args: [1] }],
+		"am-3147-1000-31471008": [{ type: "func", func: debuff_event, args: [1] }],
 		"am-3147-1000-31471009": [{ type: "func", func: debuff_event, args: [2] }],
 		"am-3147-1000-31471010": [{ type: "func", func: debuff_event, args: [3] }],
 		"am-3147-1000-31471011": [{ type: "func", func: debuff_event, args: [4] }],
