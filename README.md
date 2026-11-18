@@ -101,6 +101,7 @@ id | Dungeon name | Название данжа
 3205 | Cursed Fusion Laboratory | Заколдованная лаборатория слияния
 3206 | Crimson Killing Grounds | Окровавленное место казни
 3209 | Chaos Ice Throne | Ледяной трон Хаоса
+3400 | Catalepticon (Easy) | Сонный паралич Лукмии (легко)
 3920 | Cursed Antaroth's Abyss (Asura) | Искаженный Омут (Asura)
 7011 | Shadow of the Gutrends (Guardian) | Живодеры и черная тень (хранитель)
 7015 | Escape from Balder's Refuge (Guardian) | Операция "Спасти Убежище Балдера" (хранитель)
