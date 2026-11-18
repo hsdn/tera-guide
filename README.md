@@ -82,6 +82,7 @@ id | Dungeon name | Название данжа
 3034 | Rampaging RK-9 Kennel | Ангар RK-9 (сложно)
 3036 | Sky Cruiser (Hard) | Небесный крейсер (сложно)
 3037 | Bahaar's Sanctum (Guide) | [Тренировка] Святилище Бахаара
+3041 | Damned Citadel | Проклятая крепость Тенебриса
 3047 | Hall of the Argon Queen (Hard) | Обитель Шандры Манайи (сложно)
 3101 | Gossamer Vault | Гнездо Паркин
 3102 | Draakon Arena | Командный центр
