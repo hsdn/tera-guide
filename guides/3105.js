@@ -9,7 +9,7 @@ module.exports = (dispatch, handlers, guide, lang) => {
 	let print_donuts = true;
 
 	dispatch.hook("S_ABNORMALITY_BEGIN", dispatch._mod.majorPatchVersion >= 107 ? 5 : 4, event => {
-		if (event.id === 32051007) {
+		if (event.id === 31051007) {
 			if (dispatch._mod.game.me.is(event.target)) {
 				handlers.text({ speech: false, sub_type: "notification", message: "Lasers on you", message_RU: "Лазеры на тебе" });
 			} else {
